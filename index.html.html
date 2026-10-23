@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>منصة صيّاد - حمايتك من النصب الاحتيال</title>
+    <meta name="google-site-verification" content="-Hq1ypa4tjui67MnidnXrPRhQZYfU94CMQzEVQ4AF54" />
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f6f9;
+            margin: 0;
+            padding: 0;
+            text-align: right;
+            direction: rtl;
+        }
+
+        header {
+            background-color: #0f172a;
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 22px;
+            font-weight: bold;
+        }
+
+        .admin-btn {
+            background-color: #e11d48;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 30px auto;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .search-section {
+            text-align: center;
+        }
+
+        .search-input {
+            width: 70%;
+            padding: 10px;
+            font-size: 16px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+        }
+
+        .search-btn {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #0f172a;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .result-box {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 5px;
+            display: none;
+        }
+
+        .danger {
+            background-color: #ffe6e6;
+            color: #990000;
+            border: 1px solid #ff9999;
+        }
+
+        .safe {
+            background-color: #e6ffe6;
+            color: #006600;
+            border: 1px solid #99ff99;
+        }
+
+        .card {
+            background: #f8fafc;
+            padding: 15px;
+            margin-top: 15px;
+            border-right: 4px solid #0f172a;
+            border-radius: 4px;
+        }
+
+        /* نافذة الأدمن المباشرة */
+        #adminModal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-body {
+            background: white;
+            padding: 25px;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 500px;
+        }
+
+        input[type="text"], input[type="password"], textarea {
+            width: 100%;
+            padding: 8px;
+            margin: 8px 0;
+            box-sizing: border-border;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo">🎯 منصة صيّاد</div>
+        <button class="admin-btn" onclick="openAdmin()">🔐 لوحة الأدمن</button>
+    </header>
+
+    <div class="container">
+        <div class="search-section">
+            <h2>فحص أرقام النصابين والمحتالين</h2>
+            <input type="text" id="phoneInput" class="search-input" placeholder="ادخل الرقم هنا...">
+            <button class="search-btn" onclick="checkPhone()">فحص</button>
+            <div id="result" class="result-box"></div>
+        </div>
+
+        <hr style="margin: 30px 0;">
+
+        <h3>💡 نصائح للأمان</h3>
+        <div id="advicesList"></div>
+
+        <hr style="margin: 30px 0;">
+
+        <div style="background: #0f172a; color: white; padding: 20px; border-radius: 8px;">
+            <h3>هل تعرضت لعملية نصب؟</h3>
+            <p>تواصل مع المطور المهندس: <strong>محمد هاني فؤاد</strong></p>
+            <p>هاتف / واتساب: <strong>01284652810</strong></p>
+            <a href="https://wa.me/201284652810" target="_blank" style="color: #38bdf8; font-weight: bold;">اضغط هنا للتواصل عبر واتساب مباشر</a>
+        </div>
+    </div>
+
+    <!-- نافذة الأدمن -->
+    <div id="adminModal">
+        <div class="modal-body">
+            <button onclick="closeAdmin()" style="float: left; background: red; color: white; border: none; padding: 5px 10px; cursor: pointer;">X</button>
+            
+            <div id="loginStep">
+                <h3>دخول الأدمن</h3>
+                <input type="password" id="passInput" placeholder="ادخل الباسورد">
+                <button onclick="login()" class="admin-btn" style="width: 100%; margin-top: 10px;">دخول</button>
+            </div>
+
+            <div id="controlStep" style="display: none;">
+                <h3 style="color: green;">مرحباً بك في لوحة التحكم</h3>
+                
+                <h4>إضافة رقم نصاب:</h4>
+                <input type="text" id="scamPhone" placeholder="الرقم">
+                <input type="text" id="scamName" placeholder="الاسم/الصفحة">
+                <textarea id="scamDetails" placeholder="تفاصيل النصب"></textarea>
+                <button onclick="addScammer()" class="search-btn" style="width: 100%;">حفظ الرقم</button>
+
+                <hr>
+                <h4>إضافة نصيحة:</h4>
+                <input type="text" id="advTitle" placeholder="عنوان النصيحة">
+                <textarea id="advText" placeholder="محتوى النصيحة"></textarea>
+                <button onclick="addAdvice()" class="admin-btn" style="width: 100%;">حفظ النصيحة</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const PASS = "#$22558800";
+
+        // قاعدة البيانات
+        let scammers = JSON.parse(localStorage.getItem('scammers')) || [
+            { phone: "01000000000", name: "محتال تجريبي", details: "سرقة اموال عبر فودافون كاش" }
+        ];
+
+        let advices = JSON.parse(localStorage.getItem('advices')) || [
+            { title: "عدم مشاركة رمز OTP", text: "لا تعطي رمز التأكيد الواصل على هاتفك لأي شخص." }
+        ];
+
+        function showAdvices() {
+            let html = "";
+            advices.forEach(a => {
+                html += `<div class="card"><strong>${a.title}</strong><p>${a.text}</p></div>`;
+            });
+            document.getElementById('advicesList').innerHTML = html;
+        }
+
+        function checkPhone() {
+            let num = document.getElementById('phoneInput').value.trim();
+            let res = document.getElementById('result');
+            
+            if(!num) {
+                alert("اكتب الرقم الأول!");
+                return;
+            }
+
+            let found = scammers.find(s => s.phone === num);
+            res.style.display = "block";
+
+            if(found) {
+                res.className = "result-box danger";
+                res.innerHTML = `⚠️ <strong>احذر! هذا الرقم نصاب</strong><br>الاسم: ${found.name}<br>التفاصيل: ${found.details}`;
+            } else {
+                res.className = "result-box safe";
+                res.innerHTML = `✅ <strong>هذا الرقم غير مسجل لدينا</strong><br>إذا كان قد قام بشيء من أدوات النصب، الرجاء التواصل مع المهندس محمد لإضافته.<br><a href="https://wa.me/201284652810?text=ابلاغ عن الرقم: ${num}" target="_blank">إبلاغ عن الرقم عبر واتساب</a>`;
+            }
+        }
+
+        function openAdmin() {
+            document.getElementById('adminModal').style.display = "flex";
+        }
+
+        function closeAdmin() {
+            document.getElementById('adminModal').style.display = "none";
+        }
+
+        function login() {
+            let p = document.getElementById('passInput').value;
+            if(p === PASS) {
+                document.getElementById('loginStep').style.display = "none";
+                document.getElementById('controlStep').style.display = "block";
+            } else {
+                alert("الباسورد غلط!");
+            }
+        }
+
+        function addScammer() {
+            let p = document.getElementById('scamPhone').value;
+            let n = document.getElementById('scamName').value;
+            let d = document.getElementById('scamDetails').value;
+
+            if(!p || !d) { alert("اكتب الرقم والتفاصيل!"); return; }
+
+            scammers.push({ phone: p, name: n, details: d });
+            localStorage.setItem('scammers', JSON.stringify(scammers));
+            alert("تمت إضافة الرقم بنجاح!");
+            document.getElementById('scamPhone').value = "";
+            document.getElementById('scamName').value = "";
+            document.getElementById('scamDetails').value = "";
+        }
+
+        function addAdvice() {
+            let t = document.getElementById('advTitle').value;
+            let txt = document.getElementById('advText').value;
+
+            if(!t || !txt) { alert("اكتب العنوان والمحتوى!"); return; }
+
+            advices.push({ title: t, text: txt });
+            localStorage.setItem('advices', JSON.stringify(advices));
+            showAdvices();
+            alert("تمت إضافة النصيحة!");
+            document.getElementById('advTitle').value = "";
+            document.getElementById('advText').value = "";
+        }
+
+        showAdvices();
+    </script>
+</body>
+</html>
