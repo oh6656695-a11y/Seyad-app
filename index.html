@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>منصة صيّاد - حمايتك والأمن السيبراني</title>
+    <title>منصة صيّاد - تطوير المهندس محمد هاني فؤاد</title>
     <meta name="google-site-verification" content="yQSAQq5zo1oSdDkT_nDDmKjFmyEOd_BMmaRCedTfIVs" />
     
     <!-- استدعاء مكتبات فايربيس السحابية -->
@@ -12,7 +12,7 @@
 
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: #f4f6f9;
             margin: 0;
             padding: 0;
@@ -27,16 +27,20 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            flex-wrap: wrap;
+            gap: 10px;
         }
 
         .logo {
             font-size: 22px;
             font-weight: bold;
+            color: #38bdf8;
         }
 
         .nav-links {
             display: flex;
-            gap: 15px;
+            gap: 10px;
             align-items: center;
         }
 
@@ -44,7 +48,24 @@
             background: none;
             border: none;
             color: white;
-            font-size: 16px;
+            font-size: 14px;
+            cursor: pointer;
+            font-weight: bold;
+            padding: 6px 12px;
+            border-radius: 4px;
+            transition: 0.3s;
+        }
+
+        .nav-btn:hover {
+            background-color: #1e293b;
+        }
+
+        .user-btn {
+            background-color: #0284c7;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 5px;
             cursor: pointer;
             font-weight: bold;
         }
@@ -53,19 +74,19 @@
             background-color: #e11d48;
             color: white;
             border: none;
-            padding: 8px 15px;
+            padding: 6px 12px;
             border-radius: 5px;
             cursor: pointer;
             font-weight: bold;
         }
 
         .container {
-            max-width: 800px;
+            max-width: 850px;
             margin: 30px auto;
             padding: 20px;
             background: white;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
         }
 
         .page-section {
@@ -76,32 +97,48 @@
             display: block;
         }
 
-        .search-section {
+        .search-section, .report-section {
             text-align: center;
+            background: #fafafa;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #eee;
+            margin-bottom: 25px;
         }
 
-        .search-input {
-            width: 70%;
+        .search-input, .form-input, select.form-input {
+            width: 80%;
             padding: 10px;
-            font-size: 16px;
+            font-size: 15px;
             border: 2px solid #ddd;
-            border-radius: 5px;
+            border-radius: 6px;
+            margin: 6px 0;
+            box-sizing: border-box;
         }
 
-        .search-btn {
-            padding: 10px 20px;
+        .btn-primary {
+            padding: 10px 25px;
             font-size: 16px;
             background-color: #0f172a;
             color: white;
             border: none;
-            border-radius: 5px;
+            border-radius: 6px;
             cursor: pointer;
+            font-weight: bold;
+        }
+
+        .btn-success {
+            background-color: #16a34a !important;
+        }
+
+        .btn-danger {
+            background-color: #dc2626 !important;
         }
 
         .result-box {
             margin-top: 20px;
             padding: 15px;
-            border-radius: 5px;
+            border-radius: 6px;
             display: none;
         }
 
@@ -122,7 +159,8 @@
             padding: 15px;
             margin-top: 15px;
             border-right: 4px solid #0f172a;
-            border-radius: 4px;
+            border-radius: 6px;
+            position: relative;
         }
 
         .course-card {
@@ -130,8 +168,18 @@
             border: 1px solid #e2e8f0;
             padding: 20px;
             margin-top: 15px;
+            border-radius: 10px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .course-img {
+            width: 100%;
+            max-height: 220px;
+            object-fit: cover;
             border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
         }
 
         .price-tag {
@@ -140,8 +188,8 @@
             font-size: 18px;
         }
 
-        /* نافذة الأدمن */
-        #adminModal {
+        /* Modals & Popups */
+        .modal {
             display: none;
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -154,112 +202,231 @@
         .modal-body {
             background: white;
             padding: 25px;
-            border-radius: 8px;
+            border-radius: 10px;
             width: 90%;
-            max-width: 500px;
+            max-width: 550px;
             position: relative;
             max-height: 90vh;
             overflow-y: auto;
         }
 
-        input[type="text"], input[type="password"], textarea {
-            width: 100%;
-            padding: 8px;
-            margin: 8px 0;
-            box-sizing: border-box;
-            border: 1px solid #ddd;
+        .badge-pending {
+            background: #fef08a;
+            color: #854d0e;
+            padding: 4px 8px;
             border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .delete-btn-icon {
+            color: red;
+            cursor: pointer;
+            float: left;
+            font-weight: bold;
+        }
+
+        .code-box {
+            background: #f1f5f9;
+            border: 1px dashed #0284c7;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 6px;
+            font-family: monospace;
+            font-size: 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
     </style>
 </head>
 <body>
 
+    <!-- رسالة ترحيبية للمستخدم -->
+    <div id="welcomeModal" class="modal" style="display: flex;">
+        <div class="modal-body" style="text-align: center;">
+            <h2 style="color: #0f172a;">🎯 أهلاً بك في منصة صيّاد</h2>
+            <p style="font-size: 16px; color: #475569;">منصتك الأولى والأقوى للحماية من النصب والاحتيال والتعلم السيبراني.</p>
+            <div style="background: #f1f5f9; padding: 15px; border-radius: 8px; margin: 15px 0;">
+                <p style="margin: 5px 0;">تطوير المطور والمهندس: <strong>محمد هاني فؤاد</strong></p>
+                <p style="margin: 5px 0; color: #64748b; font-size: 14px;">مستشارك الرقمي للأمان وحفظ الحقوق</p>
+            </div>
+            <button onclick="closeWelcome()" class="btn-primary" style="width: 100%;">دخول المنصة 🚀</button>
+        </div>
+    </div>
+
     <header>
         <div class="logo">🎯 منصة صيّاد</div>
         <div class="nav-links">
             <button class="nav-btn" onclick="switchPage('home')">الرئيسية</button>
-            <button class="nav-btn" onclick="switchPage('courses')">🎓 الكورسات المدفوعة</button>
+            <button class="nav-btn" onclick="switchPage('courses')">🎓 الأكاديمية</button>
+            <button id="authBtnNav" class="user-btn" onclick="openAuthModal()">👤 دخول / حساب جديد</button>
             <button class="admin-btn" onclick="openAdmin()">🔐 لوحة الأدمن</button>
         </div>
     </header>
 
     <div class="container">
         
-        <!-- صفحة الفحص والنصائح (الرئيسية) -->
+        <!-- الصفحة الرئيسية -->
         <div id="homePage" class="page-section active">
+            
             <div class="search-section">
-                <h2>فحص أرقام النصابين والمحتالين</h2>
-                <input type="text" id="phoneInput" class="search-input" placeholder="ادخل الرقم هنا...">
-                <button class="search-btn" onclick="checkPhone()">فحص</button>
+                <h2>🔍 فحص أرقام النصابين والمحتالين</h2>
+                <input type="text" id="phoneInput" class="search-input" placeholder="ادخل رقم الهاتف لفحصه...">
+                <button class="btn-primary" onclick="checkPhone()">فحص الرقم</button>
                 <div id="result" class="result-box"></div>
+            </div>
+
+            <div class="report-section">
+                <h3>🚨 الإبلاغ عن رقم نصاب جديد</h3>
+                <p style="font-size: 14px; color: #666;">سيتم إرسال بلاغك لمراجعة المطور محمد هاني قبل الحظر.</p>
+                <input type="text" id="repPhone" class="form-input" placeholder="رقم الهاتف المشتبه به">
+                <input type="text" id="repName" class="form-input" placeholder="اسم النصاب / اسم الصفحة (إن وجد)">
+                <textarea id="repDetails" class="form-input" placeholder="تفاصيل عملية النصب بالكامل"></textarea>
+                <input type="text" id="repProof" class="form-input" placeholder="رابط صورة الإثبات / السكرين شوت (اختياري)">
+                <button onclick="submitUserReport()" class="btn-primary btn-danger" style="width: 80%;">إرسال البلاغ للمراجعة</button>
+                <div id="reportStatus" style="margin-top: 10px; font-weight: bold;"></div>
             </div>
 
             <hr style="margin: 30px 0;">
 
-            <h3>💡 نصائح للأمان السيبراني</h3>
+            <h3>💡 نصائح للتوعية والأمان السيبراني</h3>
             <div id="advicesList">جاري تحميل النصائح...</div>
 
             <hr style="margin: 30px 0;">
 
-            <div style="background: #0f172a; color: white; padding: 20px; border-radius: 8px;">
-                <h3>هل تعرضت لعملية نصب؟</h3>
-                <p>تواصل مع المطور المهندس: <strong>محمد هاني فؤاد</strong></p>
+            <div style="background: #0f172a; color: white; padding: 20px; border-radius: 8px; text-align: center;">
+                <h3>هل تعرضت لعملية نصب وتحتاج مساعدة؟</h3>
+                <p>تواصل مباشرة مع المهندس: <strong>محمد هاني فؤاد</strong></p>
                 <p>هاتف / واتساب: <strong>01284652810</strong></p>
-                <a href="https://wa.me/201284652810" target="_blank" style="color: #38bdf8; font-weight: bold;">اضغط هنا للتواصل عبر واتساب مباشر</a>
+                <a href="https://wa.me/201284652810" target="_blank" style="color: #38bdf8; font-weight: bold; text-decoration: none;">اضغط هنا للتواصل المباشر عبر واتساب</a>
             </div>
         </div>
 
         <!-- صفحة الكورسات المدفوعة -->
         <div id="coursesPage" class="page-section">
             <h2>🎓 أكاديمية صيّاد للأمن السيبراني</h2>
-            <p>احترف حماية نفسك وبياناتك من الهاكرز والنصابين من خلال كورساتنا الاحترافية.</p>
+            <p>احترف حماية نفسك وبياناتك من الهاكرز والنصابين مع المهندس محمد هاني.</p>
+            
+            <div id="userBadgeStatus" style="background: #f1f5f9; padding: 10px; border-radius: 6px; margin-bottom: 15px;">
+                قم بتسجيل الدخول بحسابك للوصول الدائم لكورساتك المفعّلة دون الحاجة لكتابة الكود في كل مرة.
+            </div>
+
+            <div style="background: #eff6ff; border-right: 4px solid #3b82f6; padding: 12px; margin: 15px 0; border-radius: 4px;">
+                💳 <strong>طريقة الدفع والاشتراك:</strong> يتم تحويل قيمة الكورس على رقم اتصالات / فودافون كاش التالي: <strong style="color: #d97706; font-size: 18px;">01153413619</strong> وتأكيد التحويل عبر واتساب لاستلام كود التفعيل الخاص بالكورس.
+            </div>
             <hr style="margin: 20px 0;">
             <div id="coursesList">جاري تحميل الكورسات...</div>
         </div>
 
     </div>
 
-    <!-- نافذة الأدمن -->
-    <div id="adminModal">
+    <!-- نافذة تسجيل دخول/إنشاء حساب المستخدمين -->
+    <div id="userAuthModal" class="modal">
+        <div class="modal-body">
+            <button onclick="closeAuthModal()" style="float: left; background: red; color: white; border: none; padding: 5px 10px; cursor: pointer; border-radius: 4px;">X</button>
+            <h3 id="authTitle">👤 تسجيل الدخول لحسابك</h3>
+            
+            <input type="email" id="userEmail" class="form-input" placeholder="البريد الإلكتروني (الإيميل)">
+            <input type="password" id="userPass" class="form-input" placeholder="كلمة المرور">
+            
+            <button onclick="handleUserAuth()" class="btn-primary btn-success" style="width: 100%; margin-top: 10px;" id="authSubmitBtn">دخول</button>
+            
+            <p style="text-align: center; margin-top: 15px; font-size: 14px;">
+                <span id="toggleAuthText">ليس لديك حساب؟</span> 
+                <a href="#" onclick="toggleAuthMode(); return false;" style="color: #0284c7; font-weight: bold;" id="toggleAuthLink">إنشاء حساب جديد</a>
+            </p>
+        </div>
+    </div>
+
+    <!-- نافذة الأدمن الشاملة -->
+    <div id="adminModal" class="modal">
         <div class="modal-body">
             <button onclick="closeAdmin()" style="float: left; background: red; color: white; border: none; padding: 5px 10px; cursor: pointer; border-radius: 4px;">X</button>
             
             <div id="loginStep">
-                <h3>دخول الأدمن</h3>
-                <input type="password" id="passInput" placeholder="ادخل الباسورد">
+                <h3>دخول الأدمن الخاص بالمهندس محمد</h3>
+                <input type="password" id="passInput" class="form-input" placeholder="ادخل الباسورد">
                 <button onclick="login()" class="admin-btn" style="width: 100%; margin-top: 10px;">دخول</button>
             </div>
 
             <div id="controlStep" style="display: none;">
-                <h3 style="color: green;">مرحباً بك في لوحة التحكم</h3>
-                
-                <h4>إضافة رقم نصاب:</h4>
-                <input type="text" id="scamPhone" placeholder="الرقم">
-                <input type="text" id="scamName" placeholder="الاسم/الصفحة">
-                <textarea id="scamDetails" placeholder="تفاصيل النصب"></textarea>
-                <button onclick="addScammer()" class="search-btn" style="width: 100%;">حفظ الرقم في الفايربيس</button>
+                <h3 style="color: green;">مرحباً بك يا م. محمد في لوحة التحكم</h3>
 
-                <hr style="margin: 20px 0;">
+                <!-- تبويبات التحكم -->
+                <div style="display: flex; gap: 5px; margin-bottom: 15px; flex-wrap: wrap;">
+                    <button onclick="showAdminTab('pendingTab')" class="nav-btn" style="background: #0f172a;">طلبات المعاينة 🚨</button>
+                    <button onclick="showAdminTab('codesTab')" class="nav-btn" style="background: #0284c7;">توليد الأكواد 🔑</button>
+                    <button onclick="showAdminTab('addTab')" class="nav-btn" style="background: #0f172a;">إضافة جديد ➕</button>
+                    <button onclick="showAdminTab('deleteTab')" class="nav-btn" style="background: #dc2626;">إدارة والحذف 🗑️</button>
+                </div>
 
-                <h4>إضافة نصيحة أمان:</h4>
-                <input type="text" id="advTitle" placeholder="عنوان النصيحة">
-                <textarea id="advText" placeholder="محتوى النصيحة"></textarea>
-                <button onclick="addAdvice()" class="admin-btn" style="width: 100%;">حفظ النصيحة في الفايربيس</button>
+                <!-- 1. طلبات المعاينة -->
+                <div id="pendingTab" class="adminTab">
+                    <h4>📥 بلاغات المستخدمين تحت المراجعة:</h4>
+                    <div id="pendingReportsList">جاري التحميل...</div>
+                </div>
 
-                <hr style="margin: 20px 0;">
+                <!-- 2. مولد الأكواد الفردية (مربوطة بكورس محدد) -->
+                <div id="codesTab" class="adminTab" style="display: none;">
+                    <h4>🔑 مولد أكواد المشتركين لكورس معين:</h4>
+                    <p style="font-size: 13px; color: #666;">اختر الكورس الذي دفع الطالب ثمنه ثم اضغط توليد الكود الخاص به:</p>
+                    
+                    <select id="codeCourseSelect" class="form-input">
+                        <option value="">جاري تحميل الكورسات...</option>
+                    </select>
 
-                <h4>🎓 إضافة كورس جديد:</h4>
-                <input type="text" id="courseTitle" placeholder="عنوان الكورس">
-                <textarea id="courseDesc" placeholder="وصف محتوى الكورس"></textarea>
-                <input type="text" id="coursePrice" placeholder="سعر الكورس (مثال: 200 جنيه / $20)">
-                <input type="text" id="courseLink" placeholder="رابط المحتوى أو فيديو الكورس بعد الدفع">
-                <button onclick="addCourse()" class="search-btn" style="width: 100%; background-color: #16a34a;">نشر الكورس أونلاين</button>
+                    <button onclick="generateSingleUseCode()" class="btn-primary btn-success" style="width: 100%; margin-bottom: 15px;">🎲 توليد كود تفعيل لهذا الكورس</button>
+                    
+                    <h5>الأكواد المتاحة حالياً للكورسات:</h5>
+                    <div id="activeCodesList" style="max-height: 200px; overflow-y: auto;">جاري التحميل...</div>
+                </div>
+
+                <!-- 3. إضافة جديد -->
+                <div id="addTab" class="adminTab" style="display: none;">
+                    <h4>إضافة رقم نصاب مباشر:</h4>
+                    <input type="text" id="scamPhone" class="form-input" placeholder="الرقم">
+                    <input type="text" id="scamName" class="form-input" placeholder="الاسم/الصفحة">
+                    <textarea id="scamDetails" class="form-input" placeholder="تفاصيل النصب"></textarea>
+                    <button onclick="addScammerDirect()" class="btn-primary" style="width: 100%;">حفظ الرقم مباشرة</button>
+
+                    <hr style="margin: 15px 0;">
+
+                    <h4>إضافة نصيحة أمان:</h4>
+                    <input type="text" id="advTitle" class="form-input" placeholder="عنوان النصيحة">
+                    <textarea id="advText" class="form-input" placeholder="محتوى النصيحة"></textarea>
+                    <button onclick="addAdvice()" class="admin-btn" style="width: 100%;">حفظ النصيحة</button>
+
+                    <hr style="margin: 15px 0;">
+
+                    <h4>🎓 إضافة كورس جديد:</h4>
+                    <input type="text" id="courseTitle" class="form-input" placeholder="عنوان الكورس">
+                    <textarea id="courseDesc" class="form-input" placeholder="وصف محتوى الكورس"></textarea>
+                    <input type="text" id="coursePrice" class="form-input" placeholder="سعر الكورس (مثال: 200 جنيه)">
+                    <input type="text" id="courseImg" class="form-input" placeholder="رابط صورة الغلاف (صورة الكورس)">
+                    <input type="text" id="courseLink" class="form-input" placeholder="رابط المحتوى بعد الدفع">
+                    <button onclick="addCourse()" class="btn-primary btn-success" style="width: 100%;">نشر الكورس</button>
+                </div>
+
+                <!-- 4. إدارة والحذف -->
+                <div id="deleteTab" class="adminTab" style="display: none;">
+                    <h4>🗑️ إدارة وحذف الأرقام المسجلة:</h4>
+                    <div id="manageScammersList" style="max-height: 150px; overflow-y: auto;"></div>
+
+                    <hr style="margin: 15px 0;">
+                    <h4>🗑️ إدارة وحذف النصائح:</h4>
+                    <div id="manageAdvicesList" style="max-height: 150px; overflow-y: auto;"></div>
+
+                    <hr style="margin: 15px 0;">
+                    <h4>🗑️ إدارة وحذف الكورسات:</h4>
+                    <div id="manageCoursesList" style="max-height: 150px; overflow-y: auto;"></div>
+                </div>
+
             </div>
         </div>
     </div>
 
     <script>
-        // إعدادات الاتصال بقاعدة بيانات الفايربيس الحية
         const firebaseConfig = {
             databaseURL: "https://seyad-app-default-rtdb.firebaseio.com/"
         };
@@ -270,8 +437,15 @@
         const database = firebase.database();
 
         const PASS = "#$22558800";
+        const PAYMENT_NUMBER = "01153413619";
 
-        // التنقل بين الصفحات
+        let currentUserEmail = localStorage.getItem('seyad_user_email') || null;
+        let isRegisterMode = false;
+
+        function closeWelcome() {
+            document.getElementById('welcomeModal').style.display = "none";
+        }
+
         function switchPage(pageId) {
             document.querySelectorAll('.page-section').forEach(sec => sec.classList.remove('active'));
             if(pageId === 'home') document.getElementById('homePage').classList.add('active');
@@ -294,62 +468,361 @@
             if (p === PASS) {
                 document.getElementById('loginStep').style.display = "none";
                 document.getElementById('controlStep').style.display = "block";
+                loadPendingReports();
+                loadManageLists();
+                loadActiveCodes();
+                loadCoursesDropdown();
             } else {
                 alert("كلمة المرور غير صحيحة!");
             }
         }
 
-        // حفظ الأرقام في الفايربيس
-        function addScammer() {
+        function showAdminTab(tabId) {
+            document.querySelectorAll('.adminTab').forEach(tab => tab.style.display = "none");
+            document.getElementById(tabId).style.display = "block";
+        }
+
+        // --- نظام حسابات المستخدمين ---
+        function openAuthModal() {
+            document.getElementById('userAuthModal').style.display = "flex";
+        }
+
+        function closeAuthModal() {
+            document.getElementById('userAuthModal').style.display = "none";
+        }
+
+        function toggleAuthMode() {
+            isRegisterMode = !isRegisterMode;
+            if (isRegisterMode) {
+                document.getElementById('authTitle').innerText = "📝 إنشاء حساب جديد";
+                document.getElementById('authSubmitBtn').innerText = "إنشاء الحساب";
+                document.getElementById('toggleAuthText').innerText = "لديك حساب بالفعل؟";
+                document.getElementById('toggleAuthLink').innerText = "تسجيل الدخول";
+            } else {
+                document.getElementById('authTitle').innerText = "👤 تسجيل الدخول لحسابك";
+                document.getElementById('authSubmitBtn').innerText = "دخول";
+                document.getElementById('toggleAuthText').innerText = "ليس لديك حساب؟";
+                document.getElementById('toggleAuthLink').innerText = "إنشاء حساب جديد";
+            }
+        }
+
+        function handleUserAuth() {
+            let email = document.getElementById('userEmail').value.trim();
+            let pass = document.getElementById('userPass').value.trim();
+
+            if (!email || !pass) {
+                alert("يرجى إدخال الإيميل وكلمة المرور!");
+                return;
+            }
+
+            let sanitizedEmail = email.replace(/\./g, '_').replace(/@/g, '_at_');
+
+            if (isRegisterMode) {
+                database.ref('users/' + sanitizedEmail).once('value').then(snap => {
+                    if (snap.exists()) {
+                        alert("هذا الإيميل مسجل بالفعل! قم بتسجيل الدخول.");
+                    } else {
+                        database.ref('users/' + sanitizedEmail).set({ email, pass }).then(() => {
+                            alert("تم إنشاء الحساب بنجاح! تم تسجيل دخولك الآن.");
+                            setCurrentUser(email);
+                            closeAuthModal();
+                        });
+                    }
+                });
+            } else {
+                database.ref('users/' + sanitizedEmail).once('value').then(snap => {
+                    if (snap.exists() && snap.val().pass === pass) {
+                        alert("تم تسجيل الدخول بنجاح!");
+                        setCurrentUser(email);
+                        closeAuthModal();
+                    } else {
+                        alert("الإيميل أو كلمة المرور غير صحيحة!");
+                    }
+                });
+            }
+        }
+
+        function setCurrentUser(email) {
+            currentUserEmail = email;
+            localStorage.setItem('seyad_user_email', email);
+            updateUserUI();
+        }
+
+        function logoutUser() {
+            currentUserEmail = null;
+            localStorage.removeItem('seyad_user_email');
+            updateUserUI();
+            alert("تم تسجيل الخروج.");
+        }
+
+        function updateUserUI() {
+            let btn = document.getElementById('authBtnNav');
+            let badge = document.getElementById('userBadgeStatus');
+            if (currentUserEmail) {
+                btn.innerText = `🟢 ${currentUserEmail.split('@')[0]} (خروج)`;
+                btn.onclick = logoutUser;
+                badge.style.background = "#e6ffe6";
+                badge.style.color = "#006600";
+                badge.innerHTML = `مرحباً بك <strong>${currentUserEmail}</strong>! الكورسات المفعّلة بحسابك تفتح تلقائياً.`;
+            } else {
+                btn.innerText = "👤 دخول / حساب جديد";
+                btn.onclick = openAuthModal;
+                badge.style.background = "#f1f5f9";
+                badge.style.color = "#333";
+                badge.innerText = "قم بتسجيل الدخول بحسابك للوصول الدائم لكورساتك المفعّلة دون إدخال الكود في كل مرة.";
+            }
+        }
+
+        // تحضير قائمة القائمة المنسدلة للكورسات في الأدمن
+        function loadCoursesDropdown() {
+            database.ref('courses').once('value', (snap) => {
+                let select = document.getElementById('codeCourseSelect');
+                let html = '<option value="">-- اختر الكورس المطلوب --</option>';
+                if (snap.exists()) {
+                    snap.forEach(child => {
+                        let c = child.val();
+                        html += `<option value="${child.key}">${c.title} (${c.price})</option>`;
+                    });
+                } else {
+                    html = '<option value="">لا توجد كورسات مضافة بعد</option>';
+                }
+                select.innerHTML = html;
+            });
+        }
+
+        // توليد كود مخصص لكورس محدد
+        function generateSingleUseCode() {
+            let courseId = document.getElementById('codeCourseSelect').value;
+            if (!courseId) {
+                alert("يرجى اختيار الكورس أولاً من القائمة المنسدلة!");
+                return;
+            }
+
+            let randomCode = "SEYAD-" + Math.random().toString(36).substring(2, 7).toUpperCase();
+            
+            database.ref('activation_codes/' + randomCode).set({
+                code: randomCode,
+                courseId: courseId,
+                used: false,
+                timestamp: Date.now()
+            }).then(() => {
+                alert(`✅ تم توليد كود التفعيل بنجاح!\n\nالكود: [ ${randomCode} ]\n\nهذا الكود يفتح الكورس المحدد فقط لمرة واحدة.`);
+            });
+        }
+
+        function loadActiveCodes() {
+            database.ref('activation_codes').on('value', (snap) => {
+                let div = document.getElementById('activeCodesList');
+                let html = "";
+                if (snap.exists()) {
+                    snap.forEach(child => {
+                        let c = child.val();
+                        html += `
+                            <div class="code-box">
+                                <span>🔑 <strong>${c.code}</strong> (كورس: ${c.courseId})</span>
+                                <button onclick="deleteItem('activation_codes/${c.code}')" style="background: red; color: white; border: none; padding: 2px 8px; border-radius: 4px; cursor: pointer;">حذف</button>
+                            </div>
+                        `;
+                    });
+                    div.innerHTML = html;
+                } else {
+                    div.innerHTML = "<p>لا توجد أكواد نشطة حالياً. اختر كورس واضغط توليد.</p>";
+                }
+            });
+        }
+
+        function submitUserReport() {
+            let phone = document.getElementById('repPhone').value.trim();
+            let name = document.getElementById('repName').value.trim();
+            let details = document.getElementById('repDetails').value.trim();
+            let proof = document.getElementById('repProof').value.trim();
+
+            if (!phone || !details) {
+                alert("يرجى إدخال الرقم وتفاصيل البلاغ على الأقل!");
+                return;
+            }
+
+            let newReportRef = database.ref('pending_reports').push();
+            let reportId = newReportRef.key;
+
+            newReportRef.set({
+                id: reportId,
+                phone: phone,
+                name: name || "غير معروف",
+                details: details,
+                proof: proof || "لا يوجد إثبات مرفق",
+                status: "pending",
+                timestamp: Date.now()
+            }).then(() => {
+                let statusDiv = document.getElementById('reportStatus');
+                statusDiv.style.color = "#d97706";
+                statusDiv.innerHTML = "⏳ تم إرسال طلبك بنجاح وهو الآن [قيد المراجعة] لدى المهندس محمد هاني.";
+                
+                database.ref('pending_reports/' + reportId).on('value', (snap) => {
+                    if (snap.exists()) {
+                        let data = snap.val();
+                        if (data.status === "approved") {
+                            statusDiv.style.color = "green";
+                            statusDiv.innerHTML = "✅ تم التأكد بنجاح وتم حظر الرقم ونشره على المنصة!";
+                        } else if (data.status === "rejected") {
+                            statusDiv.style.color = "red";
+                            statusDiv.innerHTML = `❌ لم يتم قبول الطلب. الرجاء التواصل مع فريق صيّاد: <a href="https://wa.me/201284652810?text=استفسار عن رفض بلاغ الرقم: ${phone}" target="_blank">تواصل واتساب</a>`;
+                        }
+                    }
+                });
+
+                document.getElementById('repPhone').value = "";
+                document.getElementById('repName').value = "";
+                document.getElementById('repDetails').value = "";
+                document.getElementById('repProof').value = "";
+            });
+        }
+
+        function loadPendingReports() {
+            database.ref('pending_reports').on('value', (snapshot) => {
+                let div = document.getElementById('pendingReportsList');
+                let html = "";
+                if (snapshot.exists()) {
+                    snapshot.forEach((child) => {
+                        let rep = child.val();
+                        if (rep.status === "pending") {
+                            html += `
+                                <div class="card">
+                                    <span class="badge-pending">قيد المراجعة</span>
+                                    <p><strong>الرقم:</strong> ${rep.phone}</p>
+                                    <p><strong>الاسم/الصفحة:</strong> ${rep.name}</p>
+                                    <p><strong>التفاصيل:</strong> ${rep.details}</p>
+                                    <p><strong>الإثبات:</strong> ${rep.proof !== "لا يوجد إثبات مرفق" ? `<a href="${rep.proof}" target="_blank">عرض صورة الإثبات</a>` : rep.proof}</p>
+                                    <button onclick="approveReport('${rep.id}', '${rep.phone}', '${rep.name}', '${rep.details}')" class="btn-primary btn-success" style="padding: 5px 10px;">✅ موافقة ونشر الحظر</button>
+                                    <button onclick="rejectReport('${rep.id}')" class="btn-primary btn-danger" style="padding: 5px 10px;">❌ رفض الطلب</button>
+                                </div>
+                            `;
+                        }
+                    });
+                    div.innerHTML = html || "<p>لا توجد بلاغات معلقة حالياً.</p>";
+                } else {
+                    div.innerHTML = "<p>لا توجد بلاغات معلقة.</p>";
+                }
+            });
+        }
+
+        function approveReport(repId, phone, name, details) {
+            database.ref('scammers/' + phone).set({
+                phone: phone, name: name, details: details, timestamp: Date.now()
+            }).then(() => {
+                database.ref('pending_reports/' + repId).update({ status: "approved" });
+                alert("تمت الموافقة ونشر الرقم كـ نصاب رسمي على المنصة!");
+            });
+        }
+
+        function rejectReport(repId) {
+            database.ref('pending_reports/' + repId).update({ status: "rejected" });
+            alert("تم رفض الطلب وإبلاغ المستخدم.");
+        }
+
+        function addScammerDirect() {
             let phone = document.getElementById('scamPhone').value.trim();
             let name = document.getElementById('scamName').value.trim();
             let details = document.getElementById('scamDetails').value.trim();
 
-            if (!phone) { alert("يرجى إدخال رقم الهاتف!"); return; }
+            if (!phone) { alert("أدخل الرقم!"); return; }
 
             database.ref('scammers/' + phone).set({
                 phone: phone, name: name || "غير معروف", details: details || "", timestamp: Date.now()
             }).then(() => {
-                alert("تمت إضافة الرقم بنجاح!");
+                alert("تم الحفظ بنجاح!");
                 document.getElementById('scamPhone').value = "";
                 document.getElementById('scamName').value = "";
                 document.getElementById('scamDetails').value = "";
-            }).catch(err => alert("خطأ: " + err.message));
+            });
         }
 
-        // حفظ النصائح في الفايربيس
         function addAdvice() {
             let title = document.getElementById('advTitle').value.trim();
             let text = document.getElementById('advText').value.trim();
 
-            if (!title || !text) { alert("أدخل عنوان ومحتوى النصيحة!"); return; }
+            if (!title || !text) { alert("أدخل عنوان ونص النصيحة!"); return; }
 
             database.ref('advices').push().set({ title, text, timestamp: Date.now() }).then(() => {
-                alert("تمت إضافة النصيحة بنجاح!");
+                alert("تم حفظ النصيحة!");
                 document.getElementById('advTitle').value = "";
                 document.getElementById('advText').value = "";
-            }).catch(err => alert("خطأ: " + err.message));
+            });
         }
 
-        // إضافة كورس جديد من لوحة الأدمن
         function addCourse() {
             let title = document.getElementById('courseTitle').value.trim();
             let desc = document.getElementById('courseDesc').value.trim();
             let price = document.getElementById('coursePrice').value.trim();
+            let img = document.getElementById('courseImg').value.trim();
             let link = document.getElementById('courseLink').value.trim();
 
-            if (!title || !price || !link) { alert("أدخل بيانات الكورس الأساسية (العنوان، السعر، الرابط)!"); return; }
+            if (!title || !price || !link) { alert("أدخل البيانات الأساسية!"); return; }
 
-            database.ref('courses').push().set({ title, desc, price, link, timestamp: Date.now() }).then(() => {
-                alert("تم نشر الكورس بنجاح في الأكاديمية!");
+            database.ref('courses').push().set({ title, desc, price, img, link, timestamp: Date.now() }).then(() => {
+                alert("تم نشر الكورس بالأكاديمية!");
                 document.getElementById('courseTitle').value = "";
                 document.getElementById('courseDesc').value = "";
                 document.getElementById('coursePrice').value = "";
+                document.getElementById('courseImg').value = "";
                 document.getElementById('courseLink').value = "";
-            }).catch(err => alert("خطأ: " + err.message));
+                loadCoursesDropdown();
+            });
         }
 
-        // جلب وعرض النصائح
+        function loadManageLists() {
+            database.ref('scammers').on('value', (snap) => {
+                let div = document.getElementById('manageScammersList');
+                let html = "";
+                if(snap.exists()){
+                    snap.forEach(child => {
+                        let s = child.val();
+                        html += `<div style="padding: 5px; border-bottom: 1px solid #ddd;">
+                            <span class="delete-btn-icon" onclick="deleteItem('scammers/${s.phone}')">🗑️ حذف</span>
+                            ${s.phone} - ${s.name}
+                        </div>`;
+                    });
+                    div.innerHTML = html;
+                } else { div.innerHTML = "لا توجد أرقام."; }
+            });
+
+            database.ref('advices').on('value', (snap) => {
+                let div = document.getElementById('manageAdvicesList');
+                let html = "";
+                if(snap.exists()){
+                    snap.forEach(child => {
+                        let a = child.val();
+                        html += `<div style="padding: 5px; border-bottom: 1px solid #ddd;">
+                            <span class="delete-btn-icon" onclick="deleteItem('advices/${child.key}')">🗑️ حذف</span>
+                            ${a.title}
+                        </div>`;
+                    });
+                    div.innerHTML = html;
+                } else { div.innerHTML = "لا توجد نصائح."; }
+            });
+
+            database.ref('courses').on('value', (snap) => {
+                let div = document.getElementById('manageCoursesList');
+                let html = "";
+                if(snap.exists()){
+                    snap.forEach(child => {
+                        let c = child.val();
+                        html += `<div style="padding: 5px; border-bottom: 1px solid #ddd;">
+                            <span class="delete-btn-icon" onclick="deleteItem('courses/${child.key}')">🗑️ حذف</span>
+                            ${c.title} (${c.price})
+                        </div>`;
+                    });
+                    div.innerHTML = html;
+                } else { div.innerHTML = "لا توجد كورسات."; }
+            });
+        }
+
+        function deleteItem(path) {
+            if(confirm("هل أنت متأكد من مسح هذا العنصر نهائياً؟")) {
+                database.ref(path).remove().then(() => alert("تم الحذف بنجاح!"));
+            }
+        }
+
         function loadAdvices() {
             database.ref('advices').on('value', (snapshot) => {
                 let div = document.getElementById('advicesList');
@@ -366,7 +839,6 @@
             });
         }
 
-        // جلب وعرض الكورسات المدفوعة (لا تفتح إلا بعد الدفع وتأكيد الكود)
         function loadCourses() {
             database.ref('courses').on('value', (snapshot) => {
                 let div = document.getElementById('coursesList');
@@ -376,39 +848,74 @@
                         let c = child.val();
                         html += `
                             <div class="course-card">
+                                ${c.img ? `<img src="${c.img}" class="course-img" alt="${c.title}">` : ''}
                                 <h3>${c.title}</h3>
                                 <p>${c.desc}</p>
                                 <p class="price-tag">السعر: ${c.price}</p>
-                                <button onclick="buyCourse('${c.title}', '${c.link}')" class="search-btn" style="background-color: #16a34a;">🔒 اشتراك وفتح الكورس</button>
+                                <button onclick="buyCourse('${child.key}', '${c.title}', '${c.link}')" class="btn-primary btn-success">🔓 فتح ومتابعة الكورس</button>
                             </div>
                         `;
                     });
                     div.innerHTML = html;
                 } else {
-                    div.innerHTML = "<p>لا توجد كورسات متاحة حالياً، ترقبونا قريباً!</p>";
+                    div.innerHTML = "<p>لا توجد كورسات متاحة حالياً.</p>";
                 }
             });
         }
 
-        // دالة التعامل مع محاولة فتح الكورس المدفوع
-        function buyCourse(courseTitle, courseLink) {
-            let code = prompt(`أنت على وشك الاشتراك في كورس: "${courseTitle}"\n\nإذا قمت بالدفع، ادخل كود التفعيل (أو تواصل معنا عبر واتساب للحصول عليه):`);
-            
-            if (code === "seyad2026" || code === PASS) {
-                alert("تم التحقق بنجاح! سيتم تحويلك لمحتوى الكورس الآن.");
-                window.open(courseLink, '_blank');
-            } else if (code !== null) {
-                alert("كود التفعيل غير صحيح! برجاء التواصل مع المطور المهندس محمد هاني عبر واتساب لتأكيد الدفع واستلام الكود.");
-                window.open(`https://wa.me/201284652810?text=أريد الاشتراك في كورس: ${courseTitle}`, '_blank');
+        // دالة فتح الكورس الذكية المربوطة بنفس الكورس والإيميل
+        function buyCourse(courseId, courseTitle, courseLink) {
+            if (!currentUserEmail) {
+                alert("يرجى تسجيل الدخول أولاً بحسابك أو إنشاء حساب جديد لتفعيل الكورس باسمك!");
+                openAuthModal();
+                return;
             }
+
+            let sanitizedEmail = currentUserEmail.replace(/\./g, '_').replace(/@/g, '_at_');
+
+            database.ref(`user_subscriptions/${sanitizedEmail}/${courseId}`).once('value').then(snap => {
+                if (snap.exists() && snap.val() === true) {
+                    alert(`مرحباً بك مجدداً يا ${currentUserEmail}! كورس "${courseTitle}" مفعّل بحسابك. جارٍ تحويلك للمحتوى...`);
+                    window.open(courseLink, '_blank');
+                } else {
+                    let inputCode = prompt(`أنت على وشك تفعيل كورس: "${courseTitle}" لحسابك (${currentUserEmail})\n\nقم بتسديد المبلغ على رقم كاش: (${PAYMENT_NUMBER})\n\nادخل كود التفعيل المخصص لهذا الكورس:`);
+                    
+                    if (!inputCode) return;
+                    inputCode = inputCode.trim();
+
+                    if (inputCode === PASS) {
+                        alert("مرحباً بك يا مهندس محمد! جارٍ تحويلك للمحتوى.");
+                        window.open(courseLink, '_blank');
+                        return;
+                    }
+
+                    database.ref('activation_codes/' + inputCode).once('value').then((codeSnap) => {
+                        if (codeSnap.exists()) {
+                            let codeData = codeSnap.val();
+
+                            if (codeData.courseId === courseId) {
+                                database.ref(`user_subscriptions/${sanitizedEmail}/${courseId}`).set(true);
+                                database.ref('activation_codes/' + inputCode).remove().then(() => {
+                                    alert(`🎉 أسرع مبروك! تم تفعيل كورس "${courseTitle}" بحسابك (${currentUserEmail}) بشكل دائم!\n\nيمكنك الآن فتح هذا الكورس دائماً بحسابك.`);
+                                    window.open(courseLink, '_blank');
+                                });
+                            } else {
+                                alert(`⚠️ هذا الكود مخصص لكورس آخر وليس لكورس "${courseTitle}"!\n\nيرجى التأكد من الكود المشتري لهذا الكورس.`);
+                            }
+                        } else {
+                            alert(`❌ كود التفعيل غير صالح أو تم استخدامه سابقاً!\n\nللحصول على كود تفعيل جديد يرجى التحويل على رقم كاش: ${PAYMENT_NUMBER} والتواصل عبر واتساب.`);
+                            window.open(`https://wa.me/201284652810?text=أريد الحصول على كود تفعيل لكورس: ${courseTitle}`, '_blank');
+                        }
+                    });
+                }
+            });
         }
 
-        // فحص الأرقام
         function checkPhone() {
             let num = document.getElementById('phoneInput').value.trim();
             let res = document.getElementById('result');
             
-            if(!num) { alert("اكتب الرقم الأول لفحصه!"); return; }
+            if(!num) { alert("اكتب الرقم أولاً!"); return; }
 
             database.ref('scammers/' + num).once('value').then((snapshot) => {
                 res.style.display = "block";
@@ -418,12 +925,13 @@
                     res.innerHTML = `⚠️ <strong>احذر! هذا الرقم مسجل كنصاب</strong><br>الاسم: ${data.name}<br>التفاصيل: ${data.details}`;
                 } else {
                     res.className = "result-box safe";
-                    res.innerHTML = `✅ <strong>هذا الرقم غير مسجل في قائمة النصب</strong><br>إذا كان محتالاً، تواصل مع المهندس محمد لإضافته: <a href="https://wa.me/201284652810?text=ابلاغ عن الرقم: ${num}" target="_blank">إبلاغ عبر واتساب</a>`;
+                    res.innerHTML = `✅ <strong>هذا الرقم غير مسجل في قائمة النصب</strong><br>إذا كان محتالاً، أبلغ عنه بالأسفل أو تواصل مع المهندس محمد لإضافته: <a href="https://wa.me/201284652810?text=ابلاغ عن الرقم: ${num}" target="_blank">إبلاغ عبر واتساب</a>`;
                 }
             });
         }
 
         window.onload = function() {
+            updateUserUI();
             loadAdvices();
             loadCourses();
         };
