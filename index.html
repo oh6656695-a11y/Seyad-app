@@ -5,6 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>منصة صيّاد - حمايتك من النصب الاحتيال</title>
     <meta name="google-site-verification" content="yQSAQq5zo1oSdDkT_nDDmKjFmyEOd_BMmaRCedTfIVs" />
+    
+    <!-- استدعاء مكتبات فايربيس السحابية -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -97,7 +102,7 @@
             border-radius: 4px;
         }
 
-        /* نافذة الأدمن المباشرة */
+        /* نافذة الأدمن */
         #adminModal {
             display: none;
             position: fixed;
@@ -115,6 +120,8 @@
             width: 90%;
             max-width: 500px;
             position: relative;
+            max-height: 90vh;
+            overflow-y: auto;
         }
 
         input[type="text"], input[type="password"], textarea {
@@ -122,6 +129,8 @@
             padding: 8px;
             margin: 8px 0;
             box-sizing: border-box;
+            border: 1px solid #ddd;
+            border-radius: 4px;
         }
     </style>
 </head>
@@ -143,7 +152,7 @@
         <hr style="margin: 30px 0;">
 
         <h3>💡 نصائح للأمان</h3>
-        <div id="advicesList"></div>
+        <div id="advicesList">جاري تحميل النصائح...</div>
 
         <hr style="margin: 30px 0;">
 
@@ -174,32 +183,41 @@
                 <input type="text" id="scamName" placeholder="الاسم/الصفحة">
                 <textarea id="scamDetails" placeholder="تفاصيل النصب"></textarea>
                 <button onclick="addScammer()" class="search-btn" style="width: 100%;">حفظ الرقم في الفايربيس</button>
+
+                <hr style="margin: 20px 0;">
+
+                <h4>إضافة نصيحة أمان:</h4>
+                <input type="text" id="advTitle" placeholder="عنوان النصيحة">
+                <textarea id="advText" placeholder="محتوى النصيحة"></textarea>
+                <button onclick="addAdvice()" class="admin-btn" style="width: 100%;">حفظ النصيحة في الفايربيس</button>
             </div>
         </div>
     </div>
 
-    <!-- جافاسكريبت متكامل ونظيف بدون أي تضارب -->
     <script>
+        // إعدادات الاتصال بقاعدة بيانات الفايربيس الحية
+        const firebaseConfig = {
+            databaseURL: "https://seyad-app-default-rtdb.firebaseio.com/"
+        };
+        
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+        const database = firebase.database();
+
         const PASS = "#$22558800";
 
-        // دالة فتح نافذة الأدمن
         function openAdmin() {
-            var modal = document.getElementById('adminModal');
-            if (modal) {
-                modal.style.display = "flex";
-            }
+            document.getElementById('adminModal').style.display = "flex";
         }
 
-        // دالة إغلاق نافذة الأدمن
         function closeAdmin() {
-            var modal = document.getElementById('adminModal');
-            if (modal) modal.style.display = "none";
+            document.getElementById('adminModal').style.display = "none";
             document.getElementById('loginStep').style.display = "block";
             document.getElementById('controlStep').style.display = "none";
             document.getElementById('passInput').value = "";
         }
 
-        // دالة تسجيل الدخول
         function login() {
             let p = document.getElementById('passInput').value;
             if (p === PASS) {
@@ -210,52 +228,103 @@
             }
         }
 
-        // دالة إضافة البيانات (جاهزة للربط بقاعدة البيانات)
+        // دالة حفظ الأرقام في الفايربيس
         function addScammer() {
-            let phone = document.getElementById('scamPhone').value;
-            let name = document.getElementById('scamName').value;
-            let details = document.getElementById('scamDetails').value;
+            let phone = document.getElementById('scamPhone').value.trim();
+            let name = document.getElementById('scamName').value.trim();
+            let details = document.getElementById('scamDetails').value.trim();
 
             if (!phone) {
                 alert("يرجى إدخال رقم الهاتف على الأقل!");
                 return;
             }
 
-            // إذا كنت مفعّل قاعدة بيانات Firebase في المشروع، سيتم تفعيل الكود التالي:
-            if (typeof database !== 'undefined') {
-                database.ref('scammers/' + phone).set({
-                    phone: phone,
-                    name: name || "غير معروف",
-                    details: details || "",
-                    timestamp: Date.now()
-                }).then(() => {
-                    alert("تمت إضافة الرقم بنجاح في منصة صياد!");
-                    document.getElementById('scamPhone').value = "";
-                    document.getElementById('scamName').value = "";
-                    document.getElementById('scamDetails').value = "";
-                }).catch((error) => {
-                    alert("حدث خطأ أثناء الإضافة: " + error.message);
-                });
-            } else {
-                // بديل محلي في حال لم يتم تحميل سكريبت الفايربيس بعد
-                alert("تم استقبال الرقم بنجاح (تأكد من تضمين كود Firebase SDK إذا كنت تريد ربطه بالسحابة مباشرة)!");
-            }
+            database.ref('scammers/' + phone).set({
+                phone: phone,
+                name: name || "غير معروف",
+                details: details || "",
+                timestamp: Date.now()
+            }).then(() => {
+                alert("تمت إضافة الرقم بنجاح في قاعدة البيانات!");
+                document.getElementById('scamPhone').value = "";
+                document.getElementById('scamName').value = "";
+                document.getElementById('scamDetails').value = "";
+            }).catch((error) => {
+                alert("حدث خطأ أثناء الإضافة: " + error.message);
+            });
         }
 
-        // فحص الأرقام محلياً أو تجريبياً
+        // دالة حفظ النصائح في الفايربيس
+        function addAdvice() {
+            let title = document.getElementById('advTitle').value.trim();
+            let text = document.getElementById('advText').value.trim();
+
+            if (!title || !text) {
+                alert("يرجى إدخال عنوان ومحتوى النصيحة!");
+                return;
+            }
+
+            let newAdviceRef = database.ref('advices').push();
+            newAdviceRef.set({
+                title: title,
+                text: text,
+                timestamp: Date.now()
+            }).then(() => {
+                alert("تمت إضافة النصيحة بنجاح!");
+                document.getElementById('advTitle').value = "";
+                document.getElementById('advText').value = "";
+            }).catch((error) => {
+                alert("حدث خطأ أثناء حفظ النصيحة: " + error.message);
+            });
+        }
+
+        // دالة جلب وعرض النصائح تلقائياً من الفايربيس
+        function loadAdvices() {
+            database.ref('advices').on('value', (snapshot) => {
+                let advicesListDiv = document.getElementById('advicesList');
+                let html = "";
+                
+                if (snapshot.exists()) {
+                    snapshot.forEach((childSnapshot) => {
+                        let adv = childSnapshot.val();
+                        html += `<div class="card"><strong>${adv.title}</strong><p>${adv.text}</p></div>`;
+                    });
+                    advicesListDiv.innerHTML = html;
+                } else {
+                    advicesListDiv.innerHTML = "<p>لا توجد نصائح مضافة حالياً.</p>";
+                }
+            });
+        }
+
+        // دالة فحص الرقم بالبحث في الفايربيس مباشرة
         function checkPhone() {
             let num = document.getElementById('phoneInput').value.trim();
             let res = document.getElementById('result');
             
             if(!num) {
-                alert("اكتب الرقم الأول!");
+                alert("اكتب الرقم الأول لفحصه!");
                 return;
             }
 
-            res.style.display = "block";
-            res.className = "result-box safe";
-            res.innerHTML = `✅ <strong>هذا الرقم غير مسجل</strong><br>إذا كان نصاباً، تواصل مع المهندس محمد: <a href="https://wa.me/201284652810?text=ابلاغ عن الرقم: ${num}" target="_blank">إبلاغ عبر واتساب</a>`;
+            database.ref('scammers/' + num).once('value').then((snapshot) => {
+                res.style.display = "block";
+                if (snapshot.exists()) {
+                    let data = snapshot.val();
+                    res.className = "result-box danger";
+                    res.innerHTML = `⚠️ <strong>احذر! هذا الرقم مسجل كنصاب</strong><br>الاسم: ${data.name}<br>التفاصيل: ${data.details}`;
+                } else {
+                    res.className = "result-box safe";
+                    res.innerHTML = `✅ <strong>هذا الرقم غير مسجل في قائمة النصب</strong><br>إذا كان محتالاً، تواصل مع المهندس محمد لإضافته: <a href="https://wa.me/201284652810?text=ابلاغ عن الرقم: ${num}" target="_blank">إبلاغ عبر واتساب</a>`;
+                }
+            }).catch((error) => {
+                alert("حدث خطأ أثناء البحث: " + error.message);
+            });
         }
+
+        // تشغيل تحميل النصائح فور فتح الصفحة
+        window.onload = function() {
+            loadAdvices();
+        };
     </script>
 </body>
 </html>
