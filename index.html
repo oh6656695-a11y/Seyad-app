@@ -272,5 +272,25 @@
 
         showAdvices();
     </script>
+    <!-- تحميل مكتبات Firebase الأساسية وقاعدة البيانات -->
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
+<script>
+  // إعدادات مشروع منصة صياد
+  const firebaseConfig = {
+    apiKey: "AIzaSyDC1T3trxnLGmZRsmdpGPe2y5o3RcVfWE",
+    authDomain: "seyad-app.firebaseapp.com",
+    projectId: "seyad-app",
+    storageBucket: "seyad-app.firebasestorage.app",
+    messagingSenderId: "667380348176",
+    appId: "1:667380348176:web:c00aa9e905df0b13e7a195",
+    measurementId: "G-NBN0PP8FX3"
+  };
+
+  // تهيئة الفايربيس وقاعدة البيانات
+  firebase.initializeApp(firebaseConfig);
+  const database = firebase.database();
+</script>
 </body>
 </html>
