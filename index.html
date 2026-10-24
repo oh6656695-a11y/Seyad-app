@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>منصة صيّاد - حمايتك من النصب الاحتيال</title>
+    <title>منصة صيّاد - حمايتك والأمن السيبراني</title>
     <meta name="google-site-verification" content="yQSAQq5zo1oSdDkT_nDDmKjFmyEOd_BMmaRCedTfIVs" />
     
     <!-- استدعاء مكتبات فايربيس السحابية -->
@@ -34,6 +34,21 @@
             font-weight: bold;
         }
 
+        .nav-links {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .nav-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
         .admin-btn {
             background-color: #e11d48;
             color: white;
@@ -51,6 +66,14 @@
             background: white;
             border-radius: 10px;
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .page-section {
+            display: none;
+        }
+
+        .page-section.active {
+            display: block;
         }
 
         .search-section {
@@ -102,6 +125,21 @@
             border-radius: 4px;
         }
 
+        .course-card {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            padding: 20px;
+            margin-top: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .price-tag {
+            color: #16a34a;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
         /* نافذة الأدمن */
         #adminModal {
             display: none;
@@ -138,30 +176,47 @@
 
     <header>
         <div class="logo">🎯 منصة صيّاد</div>
-        <button class="admin-btn" onclick="openAdmin()">🔐 لوحة الأدمن</button>
+        <div class="nav-links">
+            <button class="nav-btn" onclick="switchPage('home')">الرئيسية</button>
+            <button class="nav-btn" onclick="switchPage('courses')">🎓 الكورسات المدفوعة</button>
+            <button class="admin-btn" onclick="openAdmin()">🔐 لوحة الأدمن</button>
+        </div>
     </header>
 
     <div class="container">
-        <div class="search-section">
-            <h2>فحص أرقام النصابين والمحتالين</h2>
-            <input type="text" id="phoneInput" class="search-input" placeholder="ادخل الرقم هنا...">
-            <button class="search-btn" onclick="checkPhone()">فحص</button>
-            <div id="result" class="result-box"></div>
+        
+        <!-- صفحة الفحص والنصائح (الرئيسية) -->
+        <div id="homePage" class="page-section active">
+            <div class="search-section">
+                <h2>فحص أرقام النصابين والمحتالين</h2>
+                <input type="text" id="phoneInput" class="search-input" placeholder="ادخل الرقم هنا...">
+                <button class="search-btn" onclick="checkPhone()">فحص</button>
+                <div id="result" class="result-box"></div>
+            </div>
+
+            <hr style="margin: 30px 0;">
+
+            <h3>💡 نصائح للأمان السيبراني</h3>
+            <div id="advicesList">جاري تحميل النصائح...</div>
+
+            <hr style="margin: 30px 0;">
+
+            <div style="background: #0f172a; color: white; padding: 20px; border-radius: 8px;">
+                <h3>هل تعرضت لعملية نصب؟</h3>
+                <p>تواصل مع المطور المهندس: <strong>محمد هاني فؤاد</strong></p>
+                <p>هاتف / واتساب: <strong>01284652810</strong></p>
+                <a href="https://wa.me/201284652810" target="_blank" style="color: #38bdf8; font-weight: bold;">اضغط هنا للتواصل عبر واتساب مباشر</a>
+            </div>
         </div>
 
-        <hr style="margin: 30px 0;">
-
-        <h3>💡 نصائح للأمان</h3>
-        <div id="advicesList">جاري تحميل النصائح...</div>
-
-        <hr style="margin: 30px 0;">
-
-        <div style="background: #0f172a; color: white; padding: 20px; border-radius: 8px;">
-            <h3>هل تعرضت لعملية نصب؟</h3>
-            <p>تواصل مع المطور المهندس: <strong>محمد هاني فؤاد</strong></p>
-            <p>هاتف / واتساب: <strong>01284652810</strong></p>
-            <a href="https://wa.me/201284652810" target="_blank" style="color: #38bdf8; font-weight: bold;">اضغط هنا للتواصل عبر واتساب مباشر</a>
+        <!-- صفحة الكورسات المدفوعة -->
+        <div id="coursesPage" class="page-section">
+            <h2>🎓 أكاديمية صيّاد للأمن السيبراني</h2>
+            <p>احترف حماية نفسك وبياناتك من الهاكرز والنصابين من خلال كورساتنا الاحترافية.</p>
+            <hr style="margin: 20px 0;">
+            <div id="coursesList">جاري تحميل الكورسات...</div>
         </div>
+
     </div>
 
     <!-- نافذة الأدمن -->
@@ -190,6 +245,15 @@
                 <input type="text" id="advTitle" placeholder="عنوان النصيحة">
                 <textarea id="advText" placeholder="محتوى النصيحة"></textarea>
                 <button onclick="addAdvice()" class="admin-btn" style="width: 100%;">حفظ النصيحة في الفايربيس</button>
+
+                <hr style="margin: 20px 0;">
+
+                <h4>🎓 إضافة كورس جديد:</h4>
+                <input type="text" id="courseTitle" placeholder="عنوان الكورس">
+                <textarea id="courseDesc" placeholder="وصف محتوى الكورس"></textarea>
+                <input type="text" id="coursePrice" placeholder="سعر الكورس (مثال: 200 جنيه / $20)">
+                <input type="text" id="courseLink" placeholder="رابط المحتوى أو فيديو الكورس بعد الدفع">
+                <button onclick="addCourse()" class="search-btn" style="width: 100%; background-color: #16a34a;">نشر الكورس أونلاين</button>
             </div>
         </div>
     </div>
@@ -206,6 +270,13 @@
         const database = firebase.database();
 
         const PASS = "#$22558800";
+
+        // التنقل بين الصفحات
+        function switchPage(pageId) {
+            document.querySelectorAll('.page-section').forEach(sec => sec.classList.remove('active'));
+            if(pageId === 'home') document.getElementById('homePage').classList.add('active');
+            if(pageId === 'courses') document.getElementById('coursesPage').classList.add('active');
+        }
 
         function openAdmin() {
             document.getElementById('adminModal').style.display = "flex";
@@ -228,83 +299,116 @@
             }
         }
 
-        // دالة حفظ الأرقام في الفايربيس
+        // حفظ الأرقام في الفايربيس
         function addScammer() {
             let phone = document.getElementById('scamPhone').value.trim();
             let name = document.getElementById('scamName').value.trim();
             let details = document.getElementById('scamDetails').value.trim();
 
-            if (!phone) {
-                alert("يرجى إدخال رقم الهاتف على الأقل!");
-                return;
-            }
+            if (!phone) { alert("يرجى إدخال رقم الهاتف!"); return; }
 
             database.ref('scammers/' + phone).set({
-                phone: phone,
-                name: name || "غير معروف",
-                details: details || "",
-                timestamp: Date.now()
+                phone: phone, name: name || "غير معروف", details: details || "", timestamp: Date.now()
             }).then(() => {
-                alert("تمت إضافة الرقم بنجاح في قاعدة البيانات!");
+                alert("تمت إضافة الرقم بنجاح!");
                 document.getElementById('scamPhone').value = "";
                 document.getElementById('scamName').value = "";
                 document.getElementById('scamDetails').value = "";
-            }).catch((error) => {
-                alert("حدث خطأ أثناء الإضافة: " + error.message);
-            });
+            }).catch(err => alert("خطأ: " + err.message));
         }
 
-        // دالة حفظ النصائح في الفايربيس
+        // حفظ النصائح في الفايربيس
         function addAdvice() {
             let title = document.getElementById('advTitle').value.trim();
             let text = document.getElementById('advText').value.trim();
 
-            if (!title || !text) {
-                alert("يرجى إدخال عنوان ومحتوى النصيحة!");
-                return;
-            }
+            if (!title || !text) { alert("أدخل عنوان ومحتوى النصيحة!"); return; }
 
-            let newAdviceRef = database.ref('advices').push();
-            newAdviceRef.set({
-                title: title,
-                text: text,
-                timestamp: Date.now()
-            }).then(() => {
+            database.ref('advices').push().set({ title, text, timestamp: Date.now() }).then(() => {
                 alert("تمت إضافة النصيحة بنجاح!");
                 document.getElementById('advTitle').value = "";
                 document.getElementById('advText').value = "";
-            }).catch((error) => {
-                alert("حدث خطأ أثناء حفظ النصيحة: " + error.message);
-            });
+            }).catch(err => alert("خطأ: " + err.message));
         }
 
-        // دالة جلب وعرض النصائح تلقائياً من الفايربيس
+        // إضافة كورس جديد من لوحة الأدمن
+        function addCourse() {
+            let title = document.getElementById('courseTitle').value.trim();
+            let desc = document.getElementById('courseDesc').value.trim();
+            let price = document.getElementById('coursePrice').value.trim();
+            let link = document.getElementById('courseLink').value.trim();
+
+            if (!title || !price || !link) { alert("أدخل بيانات الكورس الأساسية (العنوان، السعر، الرابط)!"); return; }
+
+            database.ref('courses').push().set({ title, desc, price, link, timestamp: Date.now() }).then(() => {
+                alert("تم نشر الكورس بنجاح في الأكاديمية!");
+                document.getElementById('courseTitle').value = "";
+                document.getElementById('courseDesc').value = "";
+                document.getElementById('coursePrice').value = "";
+                document.getElementById('courseLink').value = "";
+            }).catch(err => alert("خطأ: " + err.message));
+        }
+
+        // جلب وعرض النصائح
         function loadAdvices() {
             database.ref('advices').on('value', (snapshot) => {
-                let advicesListDiv = document.getElementById('advicesList');
+                let div = document.getElementById('advicesList');
                 let html = "";
-                
                 if (snapshot.exists()) {
-                    snapshot.forEach((childSnapshot) => {
-                        let adv = childSnapshot.val();
+                    snapshot.forEach((child) => {
+                        let adv = child.val();
                         html += `<div class="card"><strong>${adv.title}</strong><p>${adv.text}</p></div>`;
                     });
-                    advicesListDiv.innerHTML = html;
+                    div.innerHTML = html;
                 } else {
-                    advicesListDiv.innerHTML = "<p>لا توجد نصائح مضافة حالياً.</p>";
+                    div.innerHTML = "<p>لا توجد نصائح حالياً.</p>";
                 }
             });
         }
 
-        // دالة فحص الرقم بالبحث في الفايربيس مباشرة
+        // جلب وعرض الكورسات المدفوعة (لا تفتح إلا بعد الدفع وتأكيد الكود)
+        function loadCourses() {
+            database.ref('courses').on('value', (snapshot) => {
+                let div = document.getElementById('coursesList');
+                let html = "";
+                if (snapshot.exists()) {
+                    snapshot.forEach((child) => {
+                        let c = child.val();
+                        html += `
+                            <div class="course-card">
+                                <h3>${c.title}</h3>
+                                <p>${c.desc}</p>
+                                <p class="price-tag">السعر: ${c.price}</p>
+                                <button onclick="buyCourse('${c.title}', '${c.link}')" class="search-btn" style="background-color: #16a34a;">🔒 اشتراك وفتح الكورس</button>
+                            </div>
+                        `;
+                    });
+                    div.innerHTML = html;
+                } else {
+                    div.innerHTML = "<p>لا توجد كورسات متاحة حالياً، ترقبونا قريباً!</p>";
+                }
+            });
+        }
+
+        // دالة التعامل مع محاولة فتح الكورس المدفوع
+        function buyCourse(courseTitle, courseLink) {
+            let code = prompt(`أنت على وشك الاشتراك في كورس: "${courseTitle}"\n\nإذا قمت بالدفع، ادخل كود التفعيل (أو تواصل معنا عبر واتساب للحصول عليه):`);
+            
+            if (code === "seyad2026" || code === PASS) {
+                alert("تم التحقق بنجاح! سيتم تحويلك لمحتوى الكورس الآن.");
+                window.open(courseLink, '_blank');
+            } else if (code !== null) {
+                alert("كود التفعيل غير صحيح! برجاء التواصل مع المطور المهندس محمد هاني عبر واتساب لتأكيد الدفع واستلام الكود.");
+                window.open(`https://wa.me/201284652810?text=أريد الاشتراك في كورس: ${courseTitle}`, '_blank');
+            }
+        }
+
+        // فحص الأرقام
         function checkPhone() {
             let num = document.getElementById('phoneInput').value.trim();
             let res = document.getElementById('result');
             
-            if(!num) {
-                alert("اكتب الرقم الأول لفحصه!");
-                return;
-            }
+            if(!num) { alert("اكتب الرقم الأول لفحصه!"); return; }
 
             database.ref('scammers/' + num).once('value').then((snapshot) => {
                 res.style.display = "block";
@@ -316,14 +420,12 @@
                     res.className = "result-box safe";
                     res.innerHTML = `✅ <strong>هذا الرقم غير مسجل في قائمة النصب</strong><br>إذا كان محتالاً، تواصل مع المهندس محمد لإضافته: <a href="https://wa.me/201284652810?text=ابلاغ عن الرقم: ${num}" target="_blank">إبلاغ عبر واتساب</a>`;
                 }
-            }).catch((error) => {
-                alert("حدث خطأ أثناء البحث: " + error.message);
             });
         }
 
-        // تشغيل تحميل النصائح فور فتح الصفحة
         window.onload = function() {
             loadAdvices();
+            loadCourses();
         };
     </script>
 </body>
