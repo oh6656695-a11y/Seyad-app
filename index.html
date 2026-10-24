@@ -393,5 +393,16 @@
     }
   });
 </script>
+    <script>
+  // اختبار سريع لوجود المودال والزرار في الصفحة
+  window.onload = function() {
+    var modal = document.getElementById('adminModal');
+    if (modal) {
+      alert("تم العثور على adminModal بنجاح!");
+    } else {
+      alert("تحذير: عنصر adminModal غير موجود في كود الـ HTML!");
+    }
+  };
+</script>
 </body>
 </html>
