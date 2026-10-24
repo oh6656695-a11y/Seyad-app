@@ -271,18 +271,8 @@
         }
 
         showAdvices();
-       <script>
-  // دالة فتح لوحة الأدمن
-  function openAdmin() {
-    var modal = document.getElementById('adminModal');
-    if (modal) {
-      modal.style.display = 'flex';
-    } else {
-      alert("عفواً، عنصر adminModal غير موجود!");
-    }
-  }
-
-  // دالة تسجيل الدخول بالباسورد المحدد
+        <script>
+  // دالة تسجيل الدخول بالباسورد
   function login() {
     var pass = document.getElementById('passInput').value;
     if (pass === "#$22558800") { 
@@ -330,6 +320,16 @@
       alert("حدث خطأ أثناء الإضافة: " + error.message);
     });
   }
+
+  // تعريف دالة openAdmin بشكل صريح عشان تمنع أي خطأ نهائياً
+  window.openAdmin = function() {
+    var modal = document.getElementById('adminModal');
+    if (modal) {
+      modal.style.display = 'flex';
+    } else {
+      alert("عفواً، عنصر adminModal غير موجود في الصفحة!");
+    }
+  };
 </script>
 </body>
 </html>
