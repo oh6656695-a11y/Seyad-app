@@ -271,32 +271,54 @@
         }
 
         showAdvices();
-   <script>
-  // دالة تسجيل الدخول بالباسورد الجديد
-  function login() {
-    var pass = document.getElementById('passInput').value;
-    if (pass === "#$22558800") { 
-      document.getElementById('loginStep').style.display = "none";
-      document.getElementById('controlStep').style.display = "block";
+        <!-- لوحة الأدمن والزرار العائم (كود متكامل) -->
+<button id="customAdminBtn" onclick="openMyAdmin()" style="position: fixed; bottom: 20px; left: 20px; z-index: 99999; background: #2563eb; color: white; border: none; padding: 12px 20px; border-radius: 50px; font-size: 16px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.3);">⚙️ لوحة الأدمن</button>
+
+<div id="customAdminModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 100000; justify-content: center; align-items: center;">
+  <div style="background: white; padding: 30px; border-radius: 12px; width: 90%; max-width: 400px; box-shadow: 0 5px 20px rgba(0,0,0,0.3); position: relative; font-family: Tahoma, sans-serif; direction: rtl;">
+    <button onclick="closeMyAdmin()" style="position: absolute; top: 10px; left: 10px; background: red; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer;">✕ إغلاق</button>
+    
+    <!-- خطوة تسجيل الدخول -->
+    <div id="myLoginStep">
+      <h3 style="margin-top: 0; color: #333;">تسجيل دخول الأدمن</h3>
+      <input type="password" id="myPassInput" placeholder="أدخل كلمة المرور" style="width: 100%; padding: 10px; margin: 10px 0; box-sizing: border-box; border: 1px solid #ccc; border-radius: 5px;" />
+      <button onclick="checkMyAdmin()" style="width: 100%; background: #2563eb; color: white; border: none; padding: 10px; border-radius: 5px; cursor: pointer; font-weight: bold;">دخول</button>
+    </div>
+
+    <!-- خطوة التحكم وإضافة البيانات -->
+    <div id="myControlStep" style="display: none;">
+      <h3 style="margin-top: 0; color: green;">مرحباً بك في لوحة التحكم</h3>
+      <input type="text" id="scamPhone" placeholder="رقم الهاتف" style="width: 100%; padding: 10px; margin: 5px 0; box-sizing: border-box; border: 1px solid #ccc; border-radius: 5px;" />
+      <input type="text" id="scamName" placeholder="اسم النصاب" style="width: 100%; padding: 10px; margin: 5px 0; box-sizing: border-box; border: 1px solid #ccc; border-radius: 5px;" />
+      <textarea id="scamDetails" placeholder="تفاصيل النصب" style="width: 100%; padding: 10px; margin: 5px 0; box-sizing: border-box; border: 1px solid #ccc; border-radius: 5px; height: 80px;"></textarea>
+      <button onclick="addScammerLive()" style="width: 100%; background: #16a34a; color: white; border: none; padding: 10px; border-radius: 5px; cursor: pointer; font-weight: bold; margin-top: 10px;">إضافة الرقم للفايربيس</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  function openMyAdmin() {
+    document.getElementById('customAdminModal').style.display = 'flex';
+  }
+
+  function closeMyAdmin() {
+    document.getElementById('customAdminModal').style.display = 'none';
+    document.getElementById('myLoginStep').style.display = 'block';
+    document.getElementById('myControlStep').style.display = 'none';
+    document.getElementById('myPassInput').value = '';
+  }
+
+  function checkMyAdmin() {
+    var pass = document.getElementById('myPassInput').value;
+    if (pass === "#$22558800") {
+      document.getElementById('myLoginStep').style.display = 'none';
+      document.getElementById('myControlStep').style.display = 'block';
     } else {
       alert("كلمة المرور غير صحيحة!");
     }
   }
 
-  // دالة إغلاق النافذة
-  function closeAdmin() {
-    var modal = document.getElementById('adminModal');
-    if (modal) modal.style.display = "none";
-    var lStep = document.getElementById('loginStep');
-    var cStep = document.getElementById('controlStep');
-    if (lStep) lStep.style.display = "block";
-    if (cStep) cStep.style.display = "none";
-    var pInput = document.getElementById('passInput');
-    if (pInput) pInput.value = "";
-  }
-
-  // دالة إضافة البيانات للفايربيس
-  function addScammer() {
+  function addScammerLive() {
     var phone = document.getElementById('scamPhone').value;
     var name = document.getElementById('scamName').value;
     var details = document.getElementById('scamDetails').value;
@@ -312,7 +334,7 @@
       details: details || "",
       timestamp: Date.now()
     }).then(() => {
-      alert("تمت إضافة الرقم بنجاح في منصة صياد!");
+      alert("تمت إضافة الرقم بنجاح في قاعدة البيانات!");
       document.getElementById('scamPhone').value = "";
       document.getElementById('scamName').value = "";
       document.getElementById('scamDetails').value = "";
@@ -321,88 +343,6 @@
     });
   }
 </script>
-    <script>
-  // دالة تسجيل الدخول بالباسورد الجديد
-  function login() {
-    var pass = document.getElementById('passInput').value;
-    if (pass === "#$22558800") { 
-      document.getElementById('loginStep').style.display = "none";
-      document.getElementById('controlStep').style.display = "block";
-    } else {
-      alert("كلمة المرور غير صحيحة!");
-    }
-  }
-
-  // دالة إغلاق النافذة
-  function closeAdmin() {
-    var modal = document.getElementById('adminModal');
-    if (modal) modal.style.display = "none";
-    var lStep = document.getElementById('loginStep');
-    var cStep = document.getElementById('controlStep');
-    if (lStep) lStep.style.display = "block";
-    if (cStep) cStep.style.display = "none";
-    var pInput = document.getElementById('passInput');
-    if (pInput) pInput.value = "";
-  }
-
-  // دالة إضافة البيانات للفايربيس
-  function addScammer() {
-    var phone = document.getElementById('scamPhone').value;
-    var name = document.getElementById('scamName').value;
-    var details = document.getElementById('scamDetails').value;
-
-    if (!phone) {
-      alert("يرجى إدخال رقم الهاتف على الأقل!");
-      return;
-    }
-
-    database.ref('scammers/' + phone).set({
-      phone: phone,
-      name: name || "غير معروف",
-      details: details || "",
-      timestamp: Date.now()
-    }).then(() => {
-      alert("تمت إضافة الرقم بنجاح في منصة صياد!");
-      document.getElementById('scamPhone').value = "";
-      document.getElementById('scamName').value = "";
-      document.getElementById('scamDetails').value = "";
-    }).catch((error) => {
-      alert("حدث خطأ أثناء الإضافة: " + error.message);
-    });
-  }
-
-  // كود ذكي: بيخلق زرار تحكم عائم في الشاشة عشان يضمن إنك تقدر تفتح لوحة الأدمن في أي وقت
-  document.addEventListener("DOMContentLoaded", function() {
-    // التأكد من عدم تكرار الزرار
-    if (!document.getElementById('floatingAdminBtn')) {
-      const floatBtn = document.createElement('button');
-      floatBtn.id = 'floatingAdminBtn';
-      floatBtn.innerText = '⚙️ لوحة الأدمن';
-      floatBtn.style.cssText = 'position: fixed; bottom: 20px; left: 20px; z-index: 9999; background: #2563eb; color: white; border: none; padding: 12px 18px; border-radius: 50px; font-size: 16px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.3);';
-      
-      floatBtn.onclick = function() {
-        const modal = document.getElementById('adminModal');
-        if (modal) {
-          modal.style.display = 'flex';
-        } else {
-          alert("عفواً، عنصر adminModal غير موجود في الصفحة!");
-        }
-      };
-      
-      document.body.appendChild(floatBtn);
-    }
-  });
-</script>
-    <script>
-  // اختبار سريع لوجود المودال والزرار في الصفحة
-  window.onload = function() {
-    var modal = document.getElementById('adminModal');
-    if (modal) {
-      alert("تم العثور على adminModal بنجاح!");
-    } else {
-      alert("تحذير: عنصر adminModal غير موجود في كود الـ HTML!");
-    }
-  };
 </script>
 </body>
 </html>
