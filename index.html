@@ -420,5 +420,71 @@
     });
   }
 </script>
+    <script>
+  // دالة تسجيل الدخول بالباسورد الجديد
+  function login() {
+    var pass = document.getElementById('passInput').value;
+    if (pass === "#$22558800") { 
+      document.getElementById('loginStep').style.display = "none";
+      document.getElementById('controlStep').style.display = "block";
+    } else {
+      alert("كلمة المرور غير صحيحة!");
+    }
+  }
+
+  // دالة إغلاق النافذة
+  function closeAdmin() {
+    var modal = document.getElementById('adminModal');
+    if (modal) modal.style.display = "none";
+    var lStep = document.getElementById('loginStep');
+    var cStep = document.getElementById('controlStep');
+    if (lStep) lStep.style.display = "block";
+    if (cStep) cStep.style.display = "none";
+    var pInput = document.getElementById('passInput');
+    if (pInput) pInput.value = "";
+  }
+
+  // دالة إضافة البيانات للفايربيس
+  function addScammer() {
+    var phone = document.getElementById('scamPhone').value;
+    var name = document.getElementById('scamName').value;
+    var details = document.getElementById('scamDetails').value;
+
+    if (!phone) {
+      alert("يرجى إدخال رقم الهاتف على الأقل!");
+      return;
+    }
+
+    database.ref('scammers/' + phone).set({
+      phone: phone,
+      name: name || "غير معروف",
+      details: details || "",
+      timestamp: Date.now()
+    }).then(() => {
+      alert("تمت إضافة الرقم بنجاح في منصة صياد!");
+      document.getElementById('scamPhone').value = "";
+      document.getElementById('scamName').value = "";
+      document.getElementById('scamDetails').value = "";
+    }).catch((error) => {
+      alert("حدث خطأ أثناء الإضافة: " + error.message);
+    });
+  }
+
+  // كود ذكي يفتح لوحة الأدمن تلقائياً عند الضغط على زرار الأدمن
+  document.addEventListener("DOMContentLoaded", function() {
+    const modal = document.getElementById('adminModal');
+    const buttons = document.querySelectorAll('button, a');
+    buttons.forEach(btn => {
+      if (btn.innerText.includes('أدمن') || btn.innerText.includes('Admin') || btn.innerText.includes('لوحة')) {
+        btn.addEventListener('click', function(e) {
+          e.preventDefault();
+          if (modal) {
+            modal.style.display = 'flex';
+          }
+        });
+      }
+    });
+  });
+</script>
 </body>
 </html>
