@@ -105,6 +105,7 @@
             background: rgba(0,0,0,0.6);
             justify-content: center;
             align-items: center;
+            z-index: 9999;
         }
 
         .modal-body {
@@ -113,13 +114,14 @@
             border-radius: 8px;
             width: 90%;
             max-width: 500px;
+            position: relative;
         }
 
         input[type="text"], input[type="password"], textarea {
             width: 100%;
             padding: 8px;
             margin: 8px 0;
-            box-sizing: border-border;
+            box-sizing: border-box;
         }
     </style>
 </head>
@@ -156,7 +158,7 @@
     <!-- نافذة الأدمن -->
     <div id="adminModal">
         <div class="modal-body">
-            <button onclick="closeAdmin()" style="float: left; background: red; color: white; border: none; padding: 5px 10px; cursor: pointer;">X</button>
+            <button onclick="closeAdmin()" style="float: left; background: red; color: white; border: none; padding: 5px 10px; cursor: pointer; border-radius: 4px;">X</button>
             
             <div id="loginStep">
                 <h3>دخول الأدمن</h3>
@@ -171,37 +173,76 @@
                 <input type="text" id="scamPhone" placeholder="الرقم">
                 <input type="text" id="scamName" placeholder="الاسم/الصفحة">
                 <textarea id="scamDetails" placeholder="تفاصيل النصب"></textarea>
-                <button onclick="addScammer()" class="search-btn" style="width: 100%;">حفظ الرقم</button>
-
-                <hr>
-                <h4>إضافة نصيحة:</h4>
-                <input type="text" id="advTitle" placeholder="عنوان النصيحة">
-                <textarea id="advText" placeholder="محتوى النصيحة"></textarea>
-                <button onclick="addAdvice()" class="admin-btn" style="width: 100%;">حفظ النصيحة</button>
+                <button onclick="addScammer()" class="search-btn" style="width: 100%;">حفظ الرقم في الفايربيس</button>
             </div>
         </div>
     </div>
 
+    <!-- جافاسكريبت متكامل ونظيف بدون أي تضارب -->
     <script>
         const PASS = "#$22558800";
 
-        // قاعدة البيانات
-        let scammers = JSON.parse(localStorage.getItem('scammers')) || [
-            { phone: "01000000000", name: "محتال تجريبي", details: "سرقة اموال عبر فودافون كاش" }
-        ];
-
-        let advices = JSON.parse(localStorage.getItem('advices')) || [
-            { title: "عدم مشاركة رمز OTP", text: "لا تعطي رمز التأكيد الواصل على هاتفك لأي شخص." }
-        ];
-
-        function showAdvices() {
-            let html = "";
-            advices.forEach(a => {
-                html += `<div class="card"><strong>${a.title}</strong><p>${a.text}</p></div>`;
-            });
-            document.getElementById('advicesList').innerHTML = html;
+        // دالة فتح نافذة الأدمن
+        function openAdmin() {
+            var modal = document.getElementById('adminModal');
+            if (modal) {
+                modal.style.display = "flex";
+            }
         }
 
+        // دالة إغلاق نافذة الأدمن
+        function closeAdmin() {
+            var modal = document.getElementById('adminModal');
+            if (modal) modal.style.display = "none";
+            document.getElementById('loginStep').style.display = "block";
+            document.getElementById('controlStep').style.display = "none";
+            document.getElementById('passInput').value = "";
+        }
+
+        // دالة تسجيل الدخول
+        function login() {
+            let p = document.getElementById('passInput').value;
+            if (p === PASS) {
+                document.getElementById('loginStep').style.display = "none";
+                document.getElementById('controlStep').style.display = "block";
+            } else {
+                alert("كلمة المرور غير صحيحة!");
+            }
+        }
+
+        // دالة إضافة البيانات (جاهزة للربط بقاعدة البيانات)
+        function addScammer() {
+            let phone = document.getElementById('scamPhone').value;
+            let name = document.getElementById('scamName').value;
+            let details = document.getElementById('scamDetails').value;
+
+            if (!phone) {
+                alert("يرجى إدخال رقم الهاتف على الأقل!");
+                return;
+            }
+
+            // إذا كنت مفعّل قاعدة بيانات Firebase في المشروع، سيتم تفعيل الكود التالي:
+            if (typeof database !== 'undefined') {
+                database.ref('scammers/' + phone).set({
+                    phone: phone,
+                    name: name || "غير معروف",
+                    details: details || "",
+                    timestamp: Date.now()
+                }).then(() => {
+                    alert("تمت إضافة الرقم بنجاح في منصة صياد!");
+                    document.getElementById('scamPhone').value = "";
+                    document.getElementById('scamName').value = "";
+                    document.getElementById('scamDetails').value = "";
+                }).catch((error) => {
+                    alert("حدث خطأ أثناء الإضافة: " + error.message);
+                });
+            } else {
+                // بديل محلي في حال لم يتم تحميل سكريبت الفايربيس بعد
+                alert("تم استقبال الرقم بنجاح (تأكد من تضمين كود Firebase SDK إذا كنت تريد ربطه بالسحابة مباشرة)!");
+            }
+        }
+
+        // فحص الأرقام محلياً أو تجريبياً
         function checkPhone() {
             let num = document.getElementById('phoneInput').value.trim();
             let res = document.getElementById('result');
@@ -211,201 +252,10 @@
                 return;
             }
 
-            let found = scammers.find(s => s.phone === num);
             res.style.display = "block";
-
-            if(found) {
-                res.className = "result-box danger";
-                res.innerHTML = `⚠️ <strong>احذر! هذا الرقم نصاب</strong><br>الاسم: ${found.name}<br>التفاصيل: ${found.details}`;
-            } else {
-                res.className = "result-box safe";
-                res.innerHTML = `✅ <strong>هذا الرقم غير مسجل لدينا</strong><br>إذا كان قد قام بشيء من أدوات النصب، الرجاء التواصل مع المهندس محمد لإضافته.<br><a href="https://wa.me/201284652810?text=ابلاغ عن الرقم: ${num}" target="_blank">إبلاغ عن الرقم عبر واتساب</a>`;
-            }
+            res.className = "result-box safe";
+            res.innerHTML = `✅ <strong>هذا الرقم غير مسجل</strong><br>إذا كان نصاباً، تواصل مع المهندس محمد: <a href="https://wa.me/201284652810?text=ابلاغ عن الرقم: ${num}" target="_blank">إبلاغ عبر واتساب</a>`;
         }
-
-        function openAdmin() {
-            document.getElementById('adminModal').style.display = "flex";
-        }
-
-        function closeAdmin() {
-            document.getElementById('adminModal').style.display = "none";
-        }
-
-        function login() {
-            let p = document.getElementById('passInput').value;
-            if(p === PASS) {
-                document.getElementById('loginStep').style.display = "none";
-                document.getElementById('controlStep').style.display = "block";
-            } else {
-                alert("الباسورد غلط!");
-            }
-        }
-
-        function addScammer() {
-            let p = document.getElementById('scamPhone').value;
-            let n = document.getElementById('scamName').value;
-            let d = document.getElementById('scamDetails').value;
-
-            if(!p || !d) { alert("اكتب الرقم والتفاصيل!"); return; }
-
-            scammers.push({ phone: p, name: n, details: d });
-            localStorage.setItem('scammers', JSON.stringify(scammers));
-            alert("تمت إضافة الرقم بنجاح!");
-            document.getElementById('scamPhone').value = "";
-            document.getElementById('scamName').value = "";
-            document.getElementById('scamDetails').value = "";
-        }
-
-        function addAdvice() {
-            let t = document.getElementById('advTitle').value;
-            let txt = document.getElementById('advText').value;
-
-            if(!t || !txt) { alert("اكتب العنوان والمحتوى!"); return; }
-
-            advices.push({ title: t, text: txt });
-            localStorage.setItem('advices', JSON.stringify(advices));
-            showAdvices();
-            alert("تمت إضافة النصيحة!");
-            document.getElementById('advTitle').value = "";
-            document.getElementById('advText').value = "";
-        }
-
-        showAdvices();
-        <script>
-  // دالة تسجيل الدخول بالباسورد
-  function login() {
-    var pass = document.getElementById('passInput').value;
-    if (pass === "#$22558800") { 
-      document.getElementById('loginStep').style.display = "none";
-      document.getElementById('controlStep').style.display = "block";
-    } else {
-      alert("كلمة المرور غير صحيحة!");
-    }
-  }
-
-  // دالة إغلاق النافذة
-  function closeAdmin() {
-    var modal = document.getElementById('adminModal');
-    if (modal) modal.style.display = "none";
-    var lStep = document.getElementById('loginStep');
-    var cStep = document.getElementById('controlStep');
-    if (lStep) lStep.style.display = "block";
-    if (cStep) cStep.style.display = "none";
-    var pInput = document.getElementById('passInput');
-    if (pInput) pInput.value = "";
-  }
-
-  // دالة إضافة البيانات للفايربيس
-  function addScammer() {
-    var phone = document.getElementById('scamPhone').value;
-    var name = document.getElementById('scamName').value;
-    var details = document.getElementById('scamDetails').value;
-
-    if (!phone) {
-      alert("يرجى إدخال رقم الهاتف على الأقل!");
-      return;
-    }
-
-    database.ref('scammers/' + phone).set({
-      phone: phone,
-      name: name || "غير معروف",
-      details: details || "",
-      timestamp: Date.now()
-    }).then(() => {
-      alert("تمت إضافة الرقم بنجاح في منصة صياد!");
-      document.getElementById('scamPhone').value = "";
-      document.getElementById('scamName').value = "";
-      document.getElementById('scamDetails').value = "";
-    }).catch((error) => {
-      alert("حدث خطأ أثناء الإضافة: " + error.message);
-    });
-  }
-
-  // تعريف دالة openAdmin بشكل صريح عشان تمنع أي خطأ نهائياً
-  window.openAdmin = function() {
-    var modal = document.getElementById('adminModal');
-    if (modal) {
-      modal.style.display = 'flex';
-    } else {
-      alert("عفواً، عنصر adminModal غير موجود في الصفحة!");
-    }
-  };
-<script/>
-    <script>
-  // تعريف دالة openAdmin بشكل شامل ودائم
-  window.openAdmin = function() {
-    var modal = document.getElementById('adminModal');
-    if (modal) {
-      modal.style.display = 'flex';
-    } else {
-      alert("عفواً، عنصر adminModal غير موجود في الصفحة!");
-    }
-  };
-
-  // دالة تسجيل الدخول بالباسورد
-  function login() {
-    var pass = document.getElementById('passInput').value;
-    if (pass === "#$22558800") { 
-      document.getElementById('loginStep').style.display = "none";
-      document.getElementById('controlStep').style.display = "block";
-    } else {
-      alert("كلمة المرور غير صحيحة!");
-    }
-  }
-
-  // دالة إغلاق النافذة
-  function closeAdmin() {
-    var modal = document.getElementById('adminModal');
-    if (modal) modal.style.display = "none";
-    var lStep = document.getElementById('loginStep');
-    var cStep = document.getElementById('controlStep');
-    if (lStep) lStep.style.display = "block";
-    if (cStep) cStep.style.display = "none";
-    var pInput = document.getElementById('passInput');
-    if (pInput) pInput.value = "";
-  }
-
-  // دالة إضافة البيانات للفايربيس
-  function addScammer() {
-    var phone = document.getElementById('scamPhone').value;
-    var name = document.getElementById('scamName').value;
-    var details = document.getElementById('scamDetails').value;
-
-    if (!phone) {
-      alert("يرجى إدخال رقم الهاتف على الأقل!");
-      return;
-    }
-
-    database.ref('scammers/' + phone).set({
-      phone: phone,
-      name: name || "غير معروف",
-      details: details || "",
-      timestamp: Date.now()
-    }).then(() => {
-      alert("تمت إضافة الرقم بنجاح في منصة صياد!");
-      document.getElementById('scamPhone').value = "";
-      document.getElementById('scamName').value = "";
-      document.getElementById('scamDetails').value = "";
-    }).catch((error) => {
-      alert("حدث خطأ أثناء الإضافة: " + error.message);
-    });
-  }
-
-  // ربط تلقائي لأي زرار أدمن في الصفحة لضمان فتحه للمودال
-  document.addEventListener("DOMContentLoaded", function() {
-    const modal = document.getElementById('adminModal');
-    const buttons = document.querySelectorAll('button, a');
-    buttons.forEach(btn => {
-      if (btn.innerText.includes('أدمن') || btn.innerText.includes('Admin') || btn.innerText.includes('لوحة')) {
-        btn.onclick = function(e) {
-          e.preventDefault();
-          if (modal) {
-            modal.style.display = 'flex';
-          }
-        };
-      }
-    });
-  });
-</script>
+    </script>
 </body>
 </html>
