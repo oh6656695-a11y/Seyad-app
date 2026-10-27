@@ -3,169 +3,320 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>منصة صيّاد الخارقة - تطوير المهندس محمد هاني فؤاد</title>
-    <meta name="google-site-verification" content="yQSAQq5zo1oSdDkT_nDDmKjFmyEOd_BMmaRCedTfIVs" />
+    <title>منصة صيّاد الخارقة - الأمن السيبراني المتقدم</title>
     
-    <!-- مكتبات فايربيس السحابية الأساسية المستقرة -->
+    <!-- مكتبات فايربيس السحابية -->
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
-    <!-- مكتبة توليد تقارير الـ PDF للأدلة الجنائية -->
+    <!-- مكتبة الـ PDF للأدلة الجنائية -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <!-- خط القاهرة العصري -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
 
     <style>
         :root {
-            --bg-main: #0f172a;
-            --bg-card: #1e293b;
-            --border-color: #334155;
+            --bg-body: #090d16;
+            --bg-card: rgba(30, 41, 59, 0.7);
+            --border-glass: rgba(56, 189, 248, 0.2);
+            --primary: #0284c7;
+            --accent: #38bdf8;
             --text-main: #f8fafc;
             --text-muted: #94a3b8;
-            --primary: #3b82f6;
-            --accent: #38bdf8;
+            --danger: #ef4444;
+            --success: #22c55e;
         }
 
-        .light-theme {
-            --bg-main: #f4f6f9;
-            --bg-card: #ffffff;
-            --border-color: #cbd5e1;
-            --text-main: #0f172a;
-            --text-muted: #64748b;
-            --primary: #0284c7;
-            --accent: #0ea5e9;
-        }
+        * { box-sizing: border-box; font-family: 'Cairo', sans-serif; margin: 0; padding: 0; }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg-main);
+            background: radial-gradient(circle at top, #0f172a, #090d16);
             color: var(--text-main);
-            margin: 0; padding: 0;
-            text-align: right; direction: rtl;
-            min-height: 100vh; display: flex; flex-direction: column; justify-content: space-between;
-            transition: 0.3s ease;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            direction: rtl;
+            text-align: right;
         }
 
+        /* شريط التنبيهات الحية */
+        .ticker-bar {
+            background: linear-gradient(90deg, #0284c7, #0369a1);
+            color: white;
+            padding: 10px;
+            font-size: 14px;
+            font-weight: bold;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+
+        /* الهيدر العصري */
         header {
-            background-color: var(--bg-card);
-            color: var(--text-main);
-            padding: 15px 20px;
-            display: flex; justify-content: space-between; align-items: center;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-            flex-wrap: wrap; gap: 10px;
-            border-bottom: 2px solid var(--primary);
+            background: rgba(15, 23, 42, 0.9);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border-glass);
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
         }
 
-        .logo { font-size: 22px; font-weight: bold; color: var(--accent); }
-        .nav-links { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+        .logo {
+            font-size: 24px;
+            font-weight: 900;
+            color: var(--accent);
+            text-shadow: 0 0 15px rgba(56,189,248,0.4);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
         .nav-btn, .user-btn, .admin-btn {
-            background: none; border: none; color: var(--text-main);
-            font-size: 14px; cursor: pointer; font-weight: bold;
-            padding: 6px 12px; border-radius: 6px; transition: 0.3s;
+            background: rgba(51, 65, 85, 0.5);
+            border: 1px solid var(--border-glass);
+            color: var(--text-main);
+            font-size: 14px;
+            cursor: pointer;
+            font-weight: 600;
+            padding: 8px 16px;
+            border-radius: 8px;
+            transition: 0.3s;
         }
-        .nav-btn:hover { background-color: var(--border-color); }
-        .user-btn { background-color: var(--primary); color: white; }
-        .admin-btn { background-color: #e11d48; color: white; }
 
+        .nav-btn:hover, .nav-btn.active {
+            background: var(--primary);
+            border-color: var(--accent);
+            box-shadow: 0 0 15px rgba(2,132,199,0.5);
+        }
+
+        .user-btn { background: #0284c7; }
+        .admin-btn { background: #e11d48; }
+
+        /* الحاوية الرئيسية */
         .container {
-            max-width: 900px; margin: 30px auto; padding: 25px;
-            background: var(--bg-card); border-radius: 12px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.3); width: 90%;
-            border: 1px solid var(--border-color);
+            max-width: 1000px;
+            margin: 40px auto;
+            padding: 30px;
+            background: var(--bg-card);
+            backdrop-filter: blur(16px);
+            border: 1px solid var(--border-glass);
+            border-radius: 16px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+            width: 90%;
         }
 
         .page-section { display: none; }
-        .page-section.active { display: block; }
+        .page-section.active { display: block; animation: fadeIn 0.4s ease; }
 
-        .search-section, .report-section, .ai-section {
-            text-align: center; background: var(--bg-main);
-            padding: 20px; border-radius: 8px; border: 1px solid var(--border-color);
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* الأقسام الداخلية */
+        .panel-box {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid var(--border-glass);
+            padding: 25px;
+            border-radius: 12px;
             margin-bottom: 25px;
+            text-align: center;
         }
 
-        .search-input, .form-input, select.form-input {
-            width: 90%; padding: 12px; font-size: 15px;
-            border: 2px solid var(--border-color); background: var(--bg-card);
-            color: var(--text-main); border-radius: 6px; margin: 8px 0; outline: none;
-            box-sizing: border-box;
+        .panel-box h2, .panel-box h3 {
+            margin-bottom: 15px;
+            color: var(--accent);
         }
 
-        .btn-primary {
-            padding: 12px 25px; font-size: 16px; background-color: var(--primary);
-            color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold;
+        .form-input, .search-input {
+            width: 100%;
+            padding: 14px;
+            font-size: 15px;
+            border: 1px solid var(--border-glass);
+            background: rgba(15, 23, 42, 0.8);
+            color: var(--text-main);
+            border-radius: 8px;
+            margin: 10px 0;
+            outline: none;
+            transition: 0.3s;
         }
-        .btn-success { background-color: #16a34a !important; }
-        .btn-danger { background-color: #dc2626 !important; }
 
-        .result-box { margin-top: 20px; padding: 15px; border-radius: 6px; display: none; text-align: right; }
-        .danger { background-color: rgba(220, 38, 38, 0.2); color: #fca5a5; border: 1px solid #dc2626; }
-        .safe { background-color: rgba(22, 163, 74, 0.2); color: #86efac; border: 1px solid #16a34a; }
-
-        .card, .course-card {
-            background: var(--bg-main); padding: 15px; margin-top: 15px;
-            border-right: 4px solid var(--accent); border-radius: 6px; border: 1px solid var(--border-color);
+        .form-input:focus, .search-input:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 10px rgba(56,189,248,0.3);
         }
-        .course-card { display: flex; flex-direction: column; gap: 10px; }
-        .course-img { width: 100%; max-height: 220px; object-fit: cover; border-radius: 8px; }
-        .price-tag { color: #4ade80; font-weight: bold; font-size: 18px; }
 
+        .btn-main {
+            padding: 12px 30px;
+            font-size: 16px;
+            background: linear-gradient(135deg, #0284c7, #0369a1);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.3s;
+            box-shadow: 0 4px 15px rgba(2,132,199,0.4);
+        }
+
+        .btn-main:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(2,132,199,0.6);
+        }
+
+        .btn-danger { background: linear-gradient(135deg, #dc2626, #b91c1c); box-shadow: 0 4px 15px rgba(220,38,38,0.4); }
+        .btn-success { background: linear-gradient(135deg, #16a34a, #15803d); box-shadow: 0 4px 15px rgba(22,163,74,0.4); }
+
+        /* نتائج الفحص والبطارية */
+        .result-box {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            display: none;
+            text-align: right;
+            font-weight: 600;
+        }
+        .danger-res { background: rgba(220,38,38,0.2); border: 1px solid var(--danger); color: #fca5a5; }
+        .safe-res { background: rgba(34,197,94,0.2); border: 1px solid var(--success); color: #86efac; }
+
+        /* الأكاديمية والكورسات */
+        .courses-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .course-card {
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid var(--border-glass);
+            border-radius: 12px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            text-align: right;
+            transition: 0.3s;
+        }
+
+        .course-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--accent);
+        }
+
+        .course-img {
+            width: 100%;
+            height: 160px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+
+        /* نافذة المودال */
         .modal {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.8); justify-content: center; align-items: center; z-index: 9999;
-        }
-        .modal-body {
-            background: var(--bg-card); color: var(--text-main); padding: 25px;
-            border-radius: 10px; width: 90%; max-width: 550px; max-height: 90vh;
-            overflow-y: auto; border: 1px solid var(--border-color);
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85);
+            backdrop-filter: blur(8px);
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
         }
 
-        .ticker-bar {
-            background: #1e293b; color: #38bdf8; padding: 8px; font-size: 13px;
-            border-bottom: 1px solid var(--border-color); overflow: hidden; white-space: nowrap; text-align: center;
+        .modal-body {
+            background: #1e293b;
+            border: 1px solid var(--border-glass);
+            padding: 30px;
+            border-radius: 16px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 15px; left: 15px;
+            background: var(--danger);
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
         }
 
         footer {
-            text-align: center; padding: 15px; background: var(--bg-card);
-            color: var(--text-muted); font-size: 13px; border-top: 1px solid var(--border-color);
+            text-align: center;
+            padding: 20px;
+            background: rgba(15, 23, 42, 0.9);
+            border-top: 1px solid var(--border-glass);
+            color: var(--text-muted);
+            font-size: 14px;
         }
     </style>
 </head>
 <body>
 
     <div class="ticker-bar">
-        <span>🚨 تنبيه أمني عاجل: منصة صيّاد مؤمنة بالكامل ومحدثة برعاية المهندس محمد هاني.</span>
+        <span>⚡ أحدث أنظمة الذكاء الاصطناعي والاستخبارات الرقمية مفعلة بالكامل برعاية المهندس محمد هاني فؤاد.</span>
     </div>
 
-    <!-- نافذة ترحيبية -->
+    <!-- نافذة الترحيب الأولية -->
     <div id="welcomeModal" class="modal" style="display: flex;">
         <div class="modal-body" style="text-align: center;">
-            <h2 style="color: var(--accent);">🎯 أهلاً بك في منصة صيّاد</h2>
-            <p style="color: var(--text-muted);">نظامك الأمني المتكامل لكشف الاحتيال وحماية البيانات.</p>
-            <div style="background: var(--bg-main); padding: 15px; border-radius: 8px; margin: 15px 0; border: 1px solid var(--border-color);">
-                <p style="margin: 5px 0;">تطوير المطور والمهندس: <strong>محمد هاني فؤاد</strong></p>
-                <p style="margin: 5px 0; color: var(--text-muted); font-size: 14px;">مستشارك الرقمي للأمان وحفظ الحقوق</p>
+            <h2 style="color: var(--accent); margin-bottom: 10px;">🎯 أهلاً بك في منصة صيّاد الخارقة</h2>
+            <p style="color: var(--text-muted); margin-bottom: 20px;">المنصة الأقوى لكشف الاحتيال، التحليل الذكي، وتتبع الجلسات الحيوية.</p>
+            <div style="background: rgba(15,23,42,0.8); padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 1px solid var(--border-glass);">
+                <p>تطوير المهندس: <strong>محمد هاني فؤاد</strong></p>
+                <p style="color: var(--text-muted); font-size: 13px; margin-top: 5px;">واتساب الدعم: 01284652810</p>
             </div>
-            <button onclick="closeWelcome()" class="btn-primary" style="width: 100%;">دخول المنصة 🚀</button>
+            <button onclick="closeWelcome()" class="btn-main" style="width: 100%;">دخول المنصة الآن 🚀</button>
         </div>
     </div>
 
     <header>
-        <div class="logo">🎯 منصة صيّاد</div>
+        <div class="logo">🎯 صيّاد السيبرانية</div>
         <div class="nav-links">
-            <button class="nav-btn" onclick="switchPage('home')">الرئيسية</button>
-            <button class="nav-btn" onclick="switchPage('aiTools')">🤖 التحليل الذكي</button>
+            <button class="nav-btn active" onclick="switchPage('home')">الرئيسية</button>
+            <button class="nav-btn" onclick="switchPage('aiTools')">🤖 الذكاء الاصطناعي</button>
             <button class="nav-btn" onclick="switchPage('courses')">🎓 الأكاديمية</button>
-            <button class="nav-btn" onclick="toggleTheme()">🌓 الوضع</button>
-            <button id="authBtnNav" class="user-btn" onclick="openAuthModal()">👤 دخول / حساب جديد</button>
+            <button id="authBtnNav" class="user-btn" onclick="openAuthModal()">👤 دخول</button>
             <button class="admin-btn" onclick="openAdmin()">🔐 لوحة الأدمن</button>
         </div>
     </header>
 
-    <div class="container">
+    <main class="container">
         
-        <!-- الصفحة الرئيسية -->
+        <!-- 1. الصفحة الرئيسية -->
         <div id="homePage" class="page-section active">
-            <div class="search-section">
+            
+            <!-- لوحة معلومات الزوار الحية والبطارية والموقع -->
+            <div class="panel-box" style="background: rgba(2, 132, 199, 0.1); border-color: rgba(2, 132, 199, 0.4);">
+                <h3 style="color: var(--accent);">🔋 لوحة الاستخبارات الحية لجهازك</h3>
+                <div id="telemetryStatus" style="font-size: 14px; color: var(--text-muted); display: flex; justify-content: space-around; flex-wrap: wrap; gap: 10px; margin-top: 10px;">
+                    <span>جاري تحليل البطارية والجهاز... ⏳</span>
+                </div>
+            </div>
+
+            <!-- فحص الأرقام -->
+            <div class="panel-box">
                 <h2>🔍 فحص أرقام النصابين والمحتالين</h2>
-                <input type="text" id="phoneInput" class="search-input" placeholder="ادخل رقم الهاتف لفحصه...">
-                <button class="btn-primary" onclick="checkPhone()">فحص الرقم</button>
+                <input type="text" id="phoneInput" class="search-input" placeholder="ادخل رقم الهاتف أو الرابط المشبوه...">
+                <button class="btn-main" onclick="checkPhone()">فحص الرقم الآن</button>
                 <div id="result" class="result-box"></div>
                 
                 <div style="margin-top: 15px; text-align: right;">
@@ -174,139 +325,148 @@
                 </div>
             </div>
 
-            <div style="text-align: center; margin-bottom: 25px;">
-                <button onclick="generateForensicPDF()" class="btn-primary btn-success">📄 تحميل تقرير الأمان الجنائي PDF</button>
+            <!-- توليد تقرير الأدلة الجنائية PDF -->
+            <div class="panel-box" style="text-align: center;">
+                <h3 style="margin-bottom: 10px;">📄 تقارير الأدلة الجنائية الرقمية</h3>
+                <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 15px;">احصل على تقرير أمني رسمي موثق لكافة عمليات الفحص بضغطة زر.</p>
+                <button onclick="generateForensicPDF()" class="btn-main btn-success">📥 تحميل تقرير الأمان PDF</button>
             </div>
 
-            <div class="report-section">
-                <h3>🚨 الإبلاغ عن رقم نصاب جديد</h3>
-                <p style="font-size: 14px; color: var(--text-muted);">سيتم إرسال بلاغك لمراجعة المطور محمد هاني قبل الحظر.</p>
+            <!-- الإبلاغ عن نصاب -->
+            <div class="panel-box">
+                <h2>🚨 الإبلاغ السري عن رقم نصاب</h2>
                 <input type="text" id="repPhone" class="form-input" placeholder="رقم الهاتف المشتبه به">
-                <input type="text" id="repName" class="form-input" placeholder="اسم النصاب / اسم الصفحة (إن وجد)">
-                <textarea id="repDetails" class="form-input" placeholder="تفاصيل عملية النصب بالكامل"></textarea>
-                <input type="text" id="repProof" class="form-input" placeholder="رابط صورة الإثبات / السكرين شوت (اختياري)">
-                <button onclick="submitUserReport()" class="btn-primary btn-danger" style="width: 90%;">إرسال البلاغ للمراجعة</button>
+                <input type="text" id="repName" class="form-input" placeholder="اسم النصاب أو الجهة المنتحلة">
+                <textarea id="repDetails" class="form-input" rows="3" placeholder="تفاصيل عملية النصب بالكامل"></textarea>
+                <button onclick="submitUserReport()" class="btn-main btn-danger" style="width: 100%;">إرسال البلاغ للمراجعة الفورية</button>
                 <div id="reportStatus" style="margin-top: 10px; font-weight: bold;"></div>
             </div>
 
-            <hr style="border-color: var(--border-color); margin: 30px 0;">
+            <!-- النصائح -->
+            <div class="panel-box">
+                <h3>💡 مركز التوعية الأمنية</h3>
+                <div id="advicesList" style="text-align: right;">جاري التحميل...</div>
+            </div>
 
-            <h3>💡 نصائح للتوعية والأمان السيبراني</h3>
-            <div id="advicesList">جاري تحميل النصائح...</div>
-
-            <hr style="border-color: var(--border-color); margin: 30px 0;">
-
-            <div style="background: var(--bg-main); color: var(--text-main); padding: 20px; border-radius: 8px; text-align: center; border: 1px solid var(--border-color);">
-                <h3>هل تعرضت لعملية نصب وتحتاج مساعدة؟</h3>
-                <p>تواصل مباشرة مع المهندس: <strong>محمد هاني فؤاد</strong></p>
-                <p>هاتف / واتساب: <strong>01284652810</strong></p>
-                <a href="https://wa.me/201284652810" target="_blank" style="color: var(--accent); font-weight: bold; text-decoration: none;">اضغط هنا للتواصل المباشر عبر واتساب</a>
+            <!-- تواصل مباشر -->
+            <div class="panel-box" style="background: rgba(22, 163, 74, 0.1); border-color: rgba(22, 163, 74, 0.3);">
+                <h3>هل تعرضت لعملية نصب وتحتاج مساعدة عاجلة؟</h3>
+                <p style="margin: 10px 0;">تواصل مباشرة مع المهندس: <strong>محمد هاني فؤاد</strong></p>
+                <p style="margin-bottom: 15px;">هاتف / واتساب: <strong style="color: var(--accent);">01284652810</strong></p>
+                <a href="https://wa.me/201284652810?text=السلام عليكم مهندس محمد، تعرضت لعملية نصب وأحتاج مساعدة أمنية" target="_blank" class="btn-main btn-success" style="display: inline-block; text-decoration: none;">مراسلة المطور عبر واتساب 💬</a>
             </div>
         </div>
 
-        <!-- صفحة التحليل الذكي -->
+        <!-- 2. صفحة أدوات الذكاء الاصطناعي -->
         <div id="aiToolsPage" class="page-section">
-            <h2>🤖 تحليل رسائل الاحتيال بالذكاء الاصطناعي</h2>
-            <p style="color: var(--text-muted);">الصق نص الرسالة المشبوهة لفحصها فوراً:</p>
-            <div class="ai-section">
-                <textarea id="aiScamText" class="form-input" rows="4" placeholder="الصق نص الرسالة هنا..."></textarea>
-                <button onclick="analyzeTextAI()" class="btn-primary">تحليل محتوى الرسالة 🧠</button>
+            <div class="panel-box">
+                <h2>🤖 وحدة تحليل رسائل الاحتيال بالذكاء الاصطناعي</h2>
+                <p style="color: var(--text-muted); margin-bottom: 15px;">الصق نص الرسالة الواردة (مثل رسائل فودافون كاش، الجوائز الوهمية، أو انتحال صفة البنوك) ليقوم النظام بتحليلها فوراً.</p>
+                <textarea id="aiScamText" class="form-input" rows="5" placeholder="الصق نص المحادثة أو الرسالة هنا..."></textarea>
+                <button onclick="analyzeTextAI()" class="btn-main">تحليل الرسالة بالذكاء الاصطناعي 🧠</button>
                 <div id="aiResult" class="result-box"></div>
             </div>
         </div>
 
-        <!-- صفحة الأكاديمية -->
+        <!-- 3. صفحة الأكاديمية المدفوعة -->
         <div id="coursesPage" class="page-section">
-            <h2>🎓 أكاديمية صيّاد للأمن السيبراني</h2>
-            <p style="color: var(--text-muted);">احترف حماية نفسك وبياناتك من الهاكرز والنصابين مع المهندس محمد هاني.</p>
-            
-            <div id="userBadgeStatus" style="background: var(--bg-main); padding: 12px; border-radius: 6px; margin-bottom: 15px; border: 1px solid var(--border-color);">
-                قم بتسجيل الدخول بحسابك للوصول الدائم لكورساتك المفعّلة دون الحاجة لكتابة الكود في كل مرة.
-            </div>
+            <div class="panel-box">
+                <h2>🎓 أكاديمية صيّاد للأمن السيبراني</h2>
+                <p style="color: var(--text-muted);">احترف حماية نفسك وبياناتك من الهاكرز مع المهندس محمد هاني.</p>
+                
+                <div style="background: rgba(2, 132, 199, 0.15); border: 1px solid var(--accent); padding: 15px; border-radius: 8px; margin: 20px 0; text-align: right;">
+                    💳 <strong>طريقة الدفع والاشتراك:</strong> تحويل قيمة الكورس على رقم فودافون / اتصالات كاش التالي: <strong style="color: #4ade80; font-size: 20px;">01153413619</strong>، ثم إرسال إيصال التحويل عبر واتساب لاستلام كود التفعيل الفوري.
+                </div>
 
-            <div style="background: rgba(59, 130, 246, 0.1); border-right: 4px solid var(--primary); padding: 12px; margin: 15px 0; border-radius: 4px; color: var(--text-main);">
-                💳 <strong>طريقة الدفع والاشتراك:</strong> يتم تحويل قيمة الكورس على رقم اتصالات / فودافون كاش التالي: <strong style="color: #4ade80; font-size: 18px;">01153413619</strong> وتأكيد التحويل عبر واتساب لاستلام كود التفعيل الخاص بالكورس.
+                <div id="userBadgeStatus" style="background: rgba(15,23,42,0.8); padding: 12px; border-radius: 8px; margin-bottom: 20px;">
+                    قم بتسجيل الدخول بحسابك للوصول الدائم لكورساتك المفعّلة.
+                </div>
+
+                <div id="coursesList" class="courses-grid">
+                    <!-- سيتم تحميل الكورسات هنا ديناميكياً -->
+                </div>
             </div>
-            <hr style="margin: 20px 0; border-color: var(--border-color);">
-            <div id="coursesList">جاري تحميل الكورسات...</div>
         </div>
 
-    </div>
+    </main>
 
-    <!-- نافذة تسجيل الدخول -->
+    <!-- نافذة تسجيل الدخول للمستخدمين -->
     <div id="userAuthModal" class="modal">
         <div class="modal-body">
-            <button onclick="closeAuthModal()" style="float: left; background: red; color: white; border: none; padding: 5px 10px; cursor: pointer; border-radius: 4px;">X</button>
-            <h3 id="authTitle" style="color: var(--accent);">👤 تسجيل الدخول لحسابك</h3>
-            <input type="email" id="userEmail" class="form-input" placeholder="البريد الإلكتروني (الإيميل)">
+            <button onclick="closeAuthModal()" class="close-modal">✕</button>
+            <h3 id="authTitle" style="color: var(--accent); margin-bottom: 15px;">👤 تسجيل الدخول لحسابك</h3>
+            <input type="email" id="userEmail" class="form-input" placeholder="البريد الإلكتروني">
             <input type="password" id="userPass" class="form-input" placeholder="كلمة المرور">
-            <button onclick="handleUserAuth()" class="btn-primary btn-success" style="width: 100%; margin-top: 10px;" id="authSubmitBtn">دخول</button>
-            <p style="text-align: center; margin-top: 15px; font-size: 14px;">
-                <span id="toggleAuthText" style="color: var(--text-muted);">ليس لديك حساب؟</span> 
-                <a href="#" onclick="toggleAuthMode(); return false;" style="color: var(--accent); font-weight: bold;" id="toggleAuthLink">إنشاء حساب جديد</a>
-            </p>
+            <button onclick="handleUserAuth()" class="btn-main" style="width: 100%; margin-top: 10px;" id="authSubmitBtn">دخول</button>
         </div>
     </div>
 
-    <!-- لوحة تحكم الأدمن -->
+    <!-- نافذة لوحة تحكم الأدمن -->
     <div id="adminModal" class="modal">
-        <div class="modal-body">
-            <button onclick="closeAdmin()" style="float: left; background: red; color: white; border: none; padding: 5px 10px; cursor: pointer; border-radius: 4px;">X</button>
+        <div class="modal-body" style="max-width: 700px;">
+            <button onclick="closeAdmin()" class="close-modal">✕</button>
+            
             <div id="loginStep">
-                <h3 style="color: var(--accent);">دخول الأدمن الخاص بالمهندس محمد</h3>
-                <input type="password" id="passInput" class="form-input" placeholder="ادخل الباسورد السري">
-                <button onclick="login()" class="admin-btn" style="width: 100%; margin-top: 10px;">تحقق والدخول</button>
+                <h3 style="color: var(--accent); margin-bottom: 15px;">🔐 دخول لوحة تحكم المطور</h3>
+                <input type="password" id="passInput" class="form-input" placeholder="ادخل الباسورد السري...">
+                <button onclick="login()" class="admin-btn" style="width: 100%; margin-top: 10px; padding: 12px;">تحقق والدخول</button>
             </div>
+
             <div id="controlStep" style="display: none;">
-                <h3 style="color: #4ade80;">مرحباً بك يا م. محمد في لوحة التحكم</h3>
+                <h3 style="color: var(--success); margin-bottom: 15px;">🟢 مرحباً بك يا م. محمد في لوحة السيطرة</h3>
                 
-                <div style="display: flex; gap: 5px; margin-bottom: 15px; flex-wrap: wrap;">
-                    <button onclick="showAdminTab('pendingTab')" class="nav-btn" style="background: #0f172a;">طلبات المعاينة 🚨</button>
-                    <button onclick="showAdminTab('codesTab')" class="nav-btn" style="background: #0284c7;">توليد الأكواد 🔑</button>
-                    <button onclick="showAdminTab('addTab')" class="nav-btn" style="background: #0f172a;">إضافة جديد ➕</button>
-                    <button onclick="showAdminTab('deleteTab')" class="nav-btn" style="background: #dc2626;">إدارة وحذف 🗑️</button>
+                <div style="display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap;">
+                    <button onclick="showAdminTab('pendingTab')" class="nav-btn">طلبات المعاينة 🚨</button>
+                    <button onclick="showAdminTab('codesTab')" class="nav-btn">توليد الأكواد 🔑</button>
+                    <button onclick="showAdminTab('addTab')" class="nav-btn">إضافة بيانات ➕</button>
+                    <button onclick="showAdminTab('manageTab')" class="nav-btn">إدارة العناصر 🗑️</button>
                 </div>
 
+                <!-- 1. طلبات المعاينة -->
                 <div id="pendingTab" class="adminTab">
-                    <h4>📥 بلاغات المستخدمين تحت المراجعة:</h4>
-                    <div id="pendingReportsList">جاري التحميل...</div>
+                    <h4>📥 بلاغات المستخدمين المعلقة:</h4>
+                    <div id="pendingReportsList" style="margin-top: 10px; max-height: 250px; overflow-y: auto;">جاري التحميل...</div>
                 </div>
 
+                <!-- 2. توليد الأكواد -->
                 <div id="codesTab" class="adminTab" style="display: none;">
-                    <h4>🔑 مولد أكواد المشتركين:</h4>
-                    <select id="codeCourseSelect" class="form-input">
-                        <option value="">جاري تحميل الكورسات...</option>
+                    <h4>🔑 مولد أكواد تفعيل الكورسات:</h4>
+                    <select id="codeCourseSelect" class="form-input" style="margin-top: 10px;">
+                        <option value="">-- اختر الكورس --</option>
                     </select>
-                    <button onclick="generateSingleUseCode()" class="btn-primary btn-success" style="width: 100%; margin-bottom: 15px;">🎲 توليد كود تفعيل</button>
-                    <div id="activeCodesList" style="max-height: 150px; overflow-y: auto;"></div>
+                    <button onclick="generateSingleUseCode()" class="btn-main btn-success" style="width: 100%; margin-top: 10px;">🎲 توليد كود تفعيل جديد</button>
                 </div>
 
+                <!-- 3. الإضافة -->
                 <div id="addTab" class="adminTab" style="display: none;">
-                    <h4>إضافة نصاب مباشر:</h4>
-                    <input type="text" id="scamPhone" class="form-input" placeholder="الرقم">
-                    <input type="text" id="scamName" class="form-input" placeholder="الاسم">
-                    <textarea id="scamDetails" class="form-input" placeholder="التفاصيل"></textarea>
-                    <button onclick="addScammerDirect()" class="btn-primary" style="width: 100%;">حفظ الرقم</button>
-                    <hr style="margin: 15px 0; border-color: var(--border-color);">
-                    <h4>إضافة كورس جديد:</h4>
+                    <h4>➕ إضافة رقم نصاب مباشر:</h4>
+                    <input type="text" id="scamPhone" class="form-input" placeholder="رقم النصاب">
+                    <input type="text" id="scamName" class="form-input" placeholder="الاسم أو الصفحة">
+                    <textarea id="scamDetails" class="form-input" rows="2" placeholder="التفاصيل"></textarea>
+                    <button onclick="addScammerDirect()" class="btn-main" style="width: 100%; margin-bottom: 15px;">حفظ الرقم بقاعدة البيانات</button>
+
+                    <hr style="border-color: var(--border-glass); margin: 15px 0;">
+
+                    <h4>🎓 إضافة كورس جديد للأكاديمية:</h4>
                     <input type="text" id="courseTitle" class="form-input" placeholder="عنوان الكورس">
-                    <textarea id="courseDesc" class="form-input" placeholder="الوصف"></textarea>
-                    <input type="text" id="coursePrice" class="form-input" placeholder="السعر">
-                    <input type="text" id="courseImg" class="form-input" placeholder="رابط الصورة">
-                    <input type="text" id="courseLink" class="form-input" placeholder="رابط المحتوى">
-                    <button onclick="addCourse()" class="btn-primary btn-success" style="width: 100%;">نشر الكورس</button>
+                    <textarea id="courseDesc" class="form-input" rows="2" placeholder="وصف محتوى الكورس"></textarea>
+                    <input type="text" id="coursePrice" class="form-input" placeholder="السعر (مثال: 150 جنيه)">
+                    <input type="text" id="courseImg" class="form-input" placeholder="رابط صورة الكورس">
+                    <input type="text" id="courseLink" class="form-input" placeholder="رابط المحتوى بعد الدفع">
+                    <button onclick="addCourse()" class="btn-main btn-success" style="width: 100%;">نشر الكورس في الأكاديمية</button>
                 </div>
 
-                <div id="deleteTab" class="adminTab" style="display: none;">
-                    <h4>🗑️ إدارة وحذف العناصر:</h4>
-                    <div id="manageScammersList" style="max-height: 200px; overflow-y: auto;"></div>
+                <!-- 4. الإدارة -->
+                <div id="manageTab" class="adminTab" style="display: none;">
+                    <h4>🗑️ الأرقام والنصابين المسجلين:</h4>
+                    <div id="manageScammersList" style="max-height: 200px; overflow-y: auto; margin-top: 10px;"></div>
                 </div>
             </div>
         </div>
     </div>
 
     <footer>
-        جميع الحقوق محفوظة لمنصة صيّاد الأمنية &copy; 2026 - تطوير: م/ محمد هاني فؤاد
+        جميع الحقوق محفوظة لمنصة صيّاد الأمنية &copy; 2026 - تطوير وإشراف: م/ محمد هاني فؤاد
     </footer>
 
     <script>
@@ -317,87 +477,81 @@
         const database = firebase.database();
 
         const PAYMENT_NUMBER = "01153413619";
-        
-        // 🔒 الباسورد مشفر بنظام Base64 (مخفي تماماً عن أي متفرج يفتح كود الصفحة)
-        // الباسورد الأصلي هو: #$22558800
-        const SECURE_ADMIN_HASH = "IyQyMjU1ODgwMA==";
-
+        const SECURE_ADMIN_HASH = "IyQyMjU1ODgwMA=="; // الباسورد المشفر: #$22558800
         let currentUserEmail = localStorage.getItem('seyad_user_email') || null;
-        let isRegisterMode = false;
 
         function closeWelcome() { document.getElementById('welcomeModal').style.display = "none"; }
+        
         function switchPage(pId) {
             document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
-            if(pId === 'home') document.getElementById('homePage').classList.add('active');
-            if(pId === 'aiTools') document.getElementById('aiToolsPage').classList.add('active');
-            if(pId === 'courses') document.getElementById('coursesPage').classList.add('active');
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            
+            if(pId === 'home') {
+                document.getElementById('homePage').classList.add('active');
+                event.target.classList.add('active');
+            } else if(pId === 'aiTools') {
+                document.getElementById('aiToolsPage').classList.add('active');
+                event.target.classList.add('active');
+            } else if(pId === 'courses') {
+                document.getElementById('coursesPage').classList.add('active');
+                event.target.classList.add('active');
+                loadCourses();
+            }
         }
 
-        function toggleTheme() {
-            document.body.classList.toggle('light-theme');
-            let isLight = document.body.classList.contains('light-theme');
-            localStorage.setItem('seyad_theme', isLight ? 'light' : 'dark');
-        }
-
-        if(localStorage.getItem('seyad_theme') === 'light') {
-            document.body.classList.add('light-theme');
-        }
-
+        // 🤖 ميزة تحليل الذكاء الاصطناعي للرسائل
         function analyzeTextAI() {
             let text = document.getElementById('aiScamText').value.trim();
             let resBox = document.getElementById('aiResult');
             resBox.style.display = "block";
             if(!text) {
-                resBox.className = "result-box danger";
-                resBox.innerText = "⚠️ برجاء إدخال نص الرسالة.";
+                resBox.className = "result-box danger-res";
+                resBox.innerText = "⚠️ برجاء إدخال نص الرسالة لفحصها.";
                 return;
             }
-            let scamKeywords = ["فودافون كاش", "تحويل", "رصيد", "مبروك", "جائزة", "البنك الأهلي", "تحديث بيانات"];
+            let scamKeywords = ["فودافون كاش", "تحويل", "رصيد", "مبروك", "جائزة", "البنك الأهلي", "تحديث بيانات", "كارت فكة", "مسابقة"];
             let matches = scamKeywords.filter(word => text.includes(word));
             if(matches.length > 0) {
-                resBox.className = "result-box danger";
-                resBox.innerHTML = `🚨 <strong>تحذير عالي الخطورة (نسبة شك 95%):</strong><br>تم رصد كلمات احتيالية: [ ${matches.join(', ')} ]`;
+                resBox.className = "result-box danger-res";
+                resBox.innerHTML = `🚨 <strong>تحذير ذكاء اصطناعي (نسبة خطر 97%):</strong><br>تم رصد كلمات احتيالية شائعة: [ ${matches.join(', ')} ]. احذر من تحويل أي أموال!`;
             } else {
-                resBox.className = "result-box safe";
-                resBox.innerHTML = `✅ لم يتم رصد مؤشرات واضحة للنصب في النص.`;
+                resBox.className = "result-box safe-res";
+                resBox.innerHTML = `✅ <strong>تحليل آمن:</strong> لم يتم رصد كلمات مشبوهة واضحة، ولكن توخ الحذر دائماً.`;
             }
         }
 
-        function generateForensicPDF() {
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF();
-            doc.text("Seyad Platform - Security Report", 20, 20);
-            doc.text("Developer: Eng. Mohamed Hany Fouad", 20, 30);
-            doc.text("Status: Verified & Secured", 20, 40);
-            doc.save("Seyad_Security_Report.pdf");
-        }
-
+        // 🔋 استخبارات البطارية والجهاز والموقع
         async function trackVisitorSession() {
             try {
-                let device = /android/i.test(navigator.userAgent) ? "Android" : /iPhone|iPad/i.test(navigator.userAgent) ? "iOS" : "Desktop";
+                let device = /android/i.test(navigator.userAgent) ? "📱 أندرويد (Android)" : /iPhone|iPad/i.test(navigator.userAgent) ? "🍏 آيفون (iOS)" : "💻 حاسوب مكتبي (Desktop)";
                 let batteryInfo = "غير مدعومة";
                 if (navigator.getBattery) {
                     const battery = await navigator.getBattery();
                     batteryInfo = `${Math.round(battery.level * 100)}% (${battery.charging ? 'يشحن ⚡' : 'لا يشحن 🔋'})`;
                 }
+                
+                let telemetryHTML = `<span>نوع الجهاز: <strong>${device}</strong></span><span>🔋 البطارية: <strong>${batteryInfo}</strong></span><span>دقة الشاشة: <strong>${window.screen.width}x${window.screen.height}</strong></span>`;
+                document.getElementById('telemetryStatus').innerHTML = telemetryHTML;
+
                 database.ref('visitors_telemetry').push({ device, batteryStatus: batteryInfo, time: new Date().toISOString() });
             } catch(e) {}
         }
 
+        // 🔍 فحص الأرقام
         function checkPhone() {
             let num = document.getElementById('phoneInput').value.trim();
             let res = document.getElementById('result');
-            if(!num) { alert("اكتب الرقم أولاً!"); return; }
+            if(!num) { alert("أدخل رقم الهاتف أولاً!"); return; }
 
             database.ref('scammers/' + num).once('value').then(snapshot => {
                 res.style.display = "block";
                 if (snapshot.exists()) {
                     let data = snapshot.val();
-                    res.className = "result-box danger";
-                    res.innerHTML = `⚠️ <strong>احذر! هذا الرقم مسجل كنصاب</strong><br>الاسم: ${data.name}<br>التفاصيل: ${data.details}`;
+                    res.className = "result-box danger-res";
+                    res.innerHTML = `⚠️ <strong>احذر! هذا الرقم مسجل كنصاب في القوائم السوداء</strong><br>الاسم/الصفحة: ${data.name}<br>التفاصيل: ${data.details}`;
                 } else {
-                    res.className = "result-box safe";
-                    res.innerHTML = `✅ <strong>هذا الرقم غير مسجل في قائمة النصب</strong><br>إذا كان محتالاً، أبلغ عنه بالأسفل أو تواصل مع المهندس محمد لإضافته: <a href="https://wa.me/201284652810?text=ابلاغ عن الرقم: ${num}" target="_blank" style="color: #4ade80;">إبلاغ عبر واتساب</a>`;
+                    res.className = "result-box safe-res";
+                    res.innerHTML = `✅ <strong>هذا الرقم غير مسجل في قائمة النصب حتى الآن</strong><br>لإبلاغ المهندس محمد عنه: <a href="https://wa.me/201284652810?text=إبلاغ عن الرقم: ${num}" target="_blank" style="color: #4ade80;">تواصل واتساب</a>`;
                 }
                 saveLocalHistory(num);
             });
@@ -412,49 +566,88 @@
             let list = document.getElementById('searchHistory');
             if(!list) return;
             let h = JSON.parse(localStorage.getItem('seyad_h')) || [];
-            list.innerHTML = h.length === 0 ? "<li style='color:var(--text-muted)'>لا يوجد بحث سابق</li>" : h.map(x=>`<li style="background:var(--bg-main); padding:5px; margin:3px 0; border-radius:4px;">🔍 ${x}</li>`).join('');
+            list.innerHTML = h.length === 0 ? "<li style='color:var(--text-muted)'>لا يوجد بحث سابق</li>" : h.map(x=>`<li style="background:rgba(15,23,42,0.8); padding:6px 10px; margin:4px 0; border-radius:6px; border:1px solid var(--border-glass);">🔍 ${x}</li>`).join('');
         }
 
+        // 📄 توليد تقرير PDF
+        function generateForensicPDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            doc.text("Seyad Cyber Platform - Forensic Report", 20, 20);
+            doc.text("Developer & Security Architect: Eng. Mohamed Hany Fouad", 20, 30);
+            doc.text("Status: Verified & Protected", 20, 40);
+            doc.text("Date: " + new Date().toLocaleString(), 20, 50);
+            doc.save("Seyad_Security_Report.pdf");
+        }
+
+        // 🚨 إبلاغ المستخدمين
         function submitUserReport() {
             let phone = document.getElementById('repPhone').value.trim();
             let name = document.getElementById('repName').value.trim();
             let details = document.getElementById('repDetails').value.trim();
-            let proof = document.getElementById('repProof').value.trim();
-
-            if (!phone || !details) {
-                alert("يرجى إدخال الرقم وتفاصيل البلاغ على الأقل!");
-                return;
-            }
+            if (!phone || !details) { alert("يرجى إدخال الرقم وتفاصيل البلاغ!"); return; }
 
             let newRef = database.ref('pending_reports').push();
-            newRef.set({
-                id: newRef.key,
-                phone: phone,
-                name: name || "غير معروف",
-                details: details,
-                proof: proof || "لا يوجد",
-                status: "pending",
-                timestamp: Date.now()
-            }).then(() => {
-                document.getElementById('reportStatus').innerText = "⏳ تم إرسال طلبك بنجاح وهو قيد المراجعة.";
+            newRef.set({ id: newRef.key, phone, name: name || "غير معروف", details, status: "pending", time: Date.now() }).then(() => {
+                document.getElementById('reportStatus').style.color = "var(--success)";
+                document.getElementById('reportStatus').innerText = "⏳ تم إرسال بلاغك بنجاح وهو قيد مراجعة المطور محمد هاني.";
             });
         }
 
+        // 🎓 تحميل وعرض الكورسات
+        function loadCourses() {
+            database.ref('courses').on('value', snap => {
+                let div = document.getElementById('coursesList');
+                let html = "";
+                if(snap.exists()) {
+                    snap.forEach(c => {
+                        let cr = c.val();
+                        let cKey = c.key;
+                        html += `
+                            <div class="course-card">
+                                ${cr.img ? `<img src="${cr.img}" class="course-img" alt="كورس">` : ''}
+                                <h3>${cr.title}</h3>
+                                <p style="color: var(--text-muted); font-size: 14px;">${cr.desc}</p>
+                                <p class="price-tag">السعر: ${cr.price}</p>
+                                <button onclick="buyCourse('${cKey}', '${cr.title}', '${cr.link}')" class="btn-main btn-success">🔓 فتح ومتابعة الكورس</button>
+                            </div>
+                        `;
+                    });
+                } else {
+                    html = "<p style='color: var(--text-muted); text-align: center; grid-column: 1/-1;'>لا توجد كورسات مضافة حالياً بالأكاديمية.</p>";
+                }
+                div.innerHTML = html;
+            });
+        }
+
+        function buyCourse(courseId, courseTitle, courseLink) {
+            if (!currentUserEmail) {
+                alert("يرجى تسجيل الدخول أولاً بحسابك لتفعيل الكورس!");
+                openAuthModal();
+                return;
+            }
+            let code = prompt(`تفعيل كورس: "${courseTitle}"\n\nأرسل المبلغ على فودافون كاش (${PAYMENT_NUMBER}) ثم أدخل كود التفعيل هنا:`);
+            if(!code) return;
+            
+            database.ref('activation_codes/' + code.trim()).once('value').then(snap => {
+                if(snap.exists() && snap.val().courseId === courseId) {
+                    alert(`🎉 مبروك! تم تفعيل كورس "${courseTitle}" بنجاح.`);
+                    database.ref('activation_codes/' + code.trim()).remove();
+                    window.open(courseLink, '_blank');
+                } else {
+                    alert("❌ كود التفعيل غير صالح أو خطأ في الكورس!");
+                    window.open(`https://wa.me/201284652810?text=طلب تفعيل كورس: ${courseTitle} لحسابي ${currentUserEmail}`, '_blank');
+                }
+            });
+        }
+
+        // 🔐 الأدمن
         function openAdmin() { document.getElementById('adminModal').style.display = "flex"; }
         function closeAdmin() { document.getElementById('adminModal').style.display = "none"; }
         
-        // 🔒 فك تشفير التحقق من الباسورد لحظة الإدخال
         function login() {
-            let enteredPass = document.getElementById('passInput').value.trim();
-            if (!enteredPass) {
-                alert("الرجاء إدخال كلمة المرور!");
-                return;
-            }
-
-            // تشفير ما أدخله المستخدم ومقارنته بالكود المشفر
-            let enteredPassEncoded = btoa(enteredPass);
-
-            if (enteredPassEncoded === SECURE_ADMIN_HASH) {
+            let pass = document.getElementById('passInput').value.trim();
+            if (btoa(pass) === SECURE_ADMIN_HASH) {
                 document.getElementById('loginStep').style.display = "none";
                 document.getElementById('controlStep').style.display = "block";
                 loadPendingReports();
@@ -465,55 +658,9 @@
             }
         }
 
-        function showAdminTab(tabId) {
+        function showAdminTab(tId) {
             document.querySelectorAll('.adminTab').forEach(t => t.style.display = "none");
-            document.getElementById(tabId).style.display = "block";
-        }
-
-        function openAuthModal() { document.getElementById('userAuthModal').style.display = "flex"; }
-        function closeAuthModal() { document.getElementById('userAuthModal').style.display = "none"; }
-        function toggleAuthMode() {
-            isRegisterMode = !isRegisterMode;
-            document.getElementById('authTitle').innerText = isRegisterMode ? "📝 إنشاء حساب جديد" : "👤 تسجيل الدخول لحسابك";
-            document.getElementById('authSubmitBtn').innerText = isRegisterMode ? "إنشاء الحساب" : "دخول";
-        }
-
-        function handleUserAuth() {
-            let email = document.getElementById('userEmail').value.trim();
-            let pass = document.getElementById('userPass').value.trim();
-            if (!email || !pass) { alert("يرجى إدخال البيانات!"); return; }
-            currentUserEmail = email;
-            localStorage.setItem('seyad_user_email', email);
-            alert("تم تسجيل الدخول بنجاح!");
-            closeAuthModal();
-            updateUserUI();
-        }
-
-        function updateUserUI() {
-            let btn = document.getElementById('authBtnNav');
-            if (currentUserEmail) {
-                btn.innerText = `🟢 ${currentUserEmail.split('@')[0]}`;
-            }
-        }
-
-        function loadCoursesDropdown() {
-            database.ref('courses').once('value', snap => {
-                let sel = document.getElementById('codeCourseSelect');
-                let html = '<option value="">-- اختر الكورس --</option>';
-                if(snap.exists()) {
-                    snap.forEach(c => { html += `<option value="${c.key}">${c.val().title}</option>`; });
-                }
-                sel.innerHTML = html;
-            });
-        }
-
-        function generateSingleUseCode() {
-            let cId = document.getElementById('codeCourseSelect').value;
-            if(!cId) { alert("اختر الكورس أولاً"); return; }
-            let code = "SEYAD-" + Math.random().toString(36).substring(2,7).toUpperCase();
-            database.ref('activation_codes/' + code).set({ code, courseId: cId, used: false }).then(() => {
-                alert(`✅ تم توليد الكود بنجاح: ${code}`);
-            });
+            document.getElementById(tId).style.display = "block";
         }
 
         function loadPendingReports() {
@@ -524,18 +671,39 @@
                     snap.forEach(c => {
                         let r = c.val();
                         if(r.status === "pending") {
-                            html += `<div style="padding:8px; border-bottom:1px solid #334155;">رقم: ${r.phone} - تفاصيل: ${r.details} <button onclick="approveReport('${r.id}', '${r.phone}', '${r.name}', '${r.details}')" class="btn-success" style="padding:2px 6px;">موافقة</button></div>`;
+                            html += `<div style="padding:10px; border-bottom:1px solid var(--border-glass); display:flex; justify-content:space-between; align-items:center;">
+                                <span>رقم: <strong>${r.phone}</strong> - ${r.details}</span>
+                                <button onclick="approveReport('${r.id}', '${r.phone}', '${r.name}', '${r.details}')" class="btn-main btn-success" style="padding:4px 10px; font-size:12px;">موافقة ونشر</button>
+                            </div>`;
                         }
                     });
                 }
-                div.innerHTML = html || "لا توجد بلاغات معلقة.";
+                div.innerHTML = html || "<p style='color:var(--text-muted)'>لا توجد بلاغات معلقة.</p>";
             });
         }
 
         function approveReport(id, phone, name, details) {
             database.ref('scammers/' + phone).set({ phone, name, details }).then(() => {
                 database.ref('pending_reports/' + id).update({ status: "approved" });
-                alert("تم الاعتماد ونشر الحظر!");
+                alert("تم الاعتماد والنشر بنجاح!");
+            });
+        }
+
+        function loadCoursesDropdown() {
+            database.ref('courses').once('value', snap => {
+                let sel = document.getElementById('codeCourseSelect');
+                let html = '<option value="">-- اختر الكورس --</option>';
+                if(snap.exists()) { snap.forEach(c => { html += `<option value="${c.key}">${c.val().title}</option>`; }); }
+                sel.innerHTML = html;
+            });
+        }
+
+        function generateSingleUseCode() {
+            let cId = document.getElementById('codeCourseSelect').value;
+            if(!cId) { alert("اختر الكورس أولاً!"); return; }
+            let code = "SEYAD-" + Math.random().toString(36).substring(2,7).toUpperCase();
+            database.ref('activation_codes/' + code).set({ code, courseId: cId }).then(() => {
+                alert(`✅ تم توليد الكود بنجاح: [ ${code} ]`);
             });
         }
 
@@ -543,8 +711,8 @@
             let phone = document.getElementById('scamPhone').value.trim();
             let name = document.getElementById('scamName').value.trim();
             let details = document.getElementById('scamDetails').value.trim();
-            if(!phone) { alert("ادخل الرقم"); return; }
-            database.ref('scammers/' + phone).set({ phone, name, details }).then(() => alert("تم الحفظ بنجاح!"));
+            if(!phone) { alert("أدخل الرقم!"); return; }
+            database.ref('scammers/' + phone).set({ phone, name, details }).then(() => alert("تم الحفظ المباشر بقاعدة البيانات!"));
         }
 
         function addCourse() {
@@ -553,9 +721,9 @@
             let price = document.getElementById('coursePrice').value.trim();
             let img = document.getElementById('courseImg').value.trim();
             let link = document.getElementById('courseLink').value.trim();
-            if(!title || !price || !link) { alert("أدخل البيانات الأساسية"); return; }
+            if(!title || !price || !link) { alert("أدخل بيانات الكورس الأساسية!"); return; }
             database.ref('courses').push({ title, desc, price, img, link }).then(() => {
-                alert("تم نشر الكورس بنجاح!");
+                alert("تم نشر الكورس في الأكاديمية بنجاح!");
                 loadCoursesDropdown();
             });
         }
@@ -565,25 +733,36 @@
                 let div = document.getElementById('manageScammersList');
                 let html = "";
                 if(snap.exists()) {
-                    snap.forEach(c => { let s = c.val(); html += `<div style="padding:5px; border-bottom:1px solid #334155;">${s.phone} - ${s.name}</div>`; });
+                    snap.forEach(c => { let s = c.val(); html += `<div style="padding:6px; border-bottom:1px solid var(--border-glass);"><strong>${s.phone}</strong> - ${s.name}</div>`; });
                 }
                 div.innerHTML = html || "لا توجد أرقام مسجلة.";
             });
         }
 
+        // الحسابات
+        function openAuthModal() { document.getElementById('userAuthModal').style.display = "flex"; }
+        function closeAuthModal() { document.getElementById('userAuthModal').style.display = "none"; }
+        function handleUserAuth() {
+            let e = document.getElementById('userEmail').value.trim();
+            let p = document.getElementById('userPass').value.trim();
+            if(!e || !p) { alert("أدخل الإيميل والباسورد!"); return; }
+            currentUserEmail = e;
+            localStorage.setItem('seyad_user_email', e);
+            alert("تم تسجيل الدخول بنجاح!");
+            closeAuthModal();
+            document.getElementById('authBtnNav').innerText = `🟢 ${e.split('@')[0]}`;
+        }
+
         window.onload = function() {
-            updateUserUI();
             trackVisitorSession();
             loadHistory();
+            if(currentUserEmail) {
+                document.getElementById('authBtnNav').innerText = `🟢 ${currentUserEmail.split('@')[0]}`;
+            }
             database.ref('advices').on('value', snap => {
                 let html = "";
-                if(snap.exists()) { snap.forEach(c => { let a = c.val(); html += `<div class='card'><strong>${a.title}</strong><p>${a.text}</p></div>`; }); }
+                if(snap.exists()) { snap.forEach(c => { let a = c.val(); html += `<div style="background:rgba(15,23,42,0.6); padding:10px; margin:8px 0; border-radius:6px; border-right:3px solid var(--accent);"><strong>${a.title}</strong><p style='color:var(--text-muted); font-size:14px; margin-top:4px;'>${a.text}</p></div>`; }); }
                 document.getElementById('advicesList').innerHTML = html || "لا توجد نصائح حالياً.";
-            });
-            database.ref('courses').on('value', snap => {
-                let html = "";
-                if(snap.exists()) { snap.forEach(c => { let cr = c.val(); html += `<div class='course-card'><h3>${cr.title}</h3><p>${cr.desc}</p><p class='price-tag'>السعر: ${cr.price}</p></div>`; }); }
-                document.getElementById('coursesList').innerHTML = html || "لا توجد كورسات متاحة.";
             });
         };
     </script>
